@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Opportunity Map — Internal Content Approval Process</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0e0f11;
+    --surface: #15171a;
+    --surface2: #1c1f23;
+    --border: #2a2d32;
+    --border-light: #323640;
+    --text: #e8e9eb;
+    --text-muted: #7a7f8a;
+    --text-dim: #4a4f5a;
+
+    --automate: #4ade80;
+    --automate-bg: #0d2b1a;
+    --automate-border: #1a4a2e;
+
+    --augment: #60a5fa;
+    --augment-bg: #0d1e35;
+    --augment-border: #1a3555;
+
+    --human: #f59e0b;
+    --human-bg: #2a1f08;
+    --human-border: #4a3510;
+
+    --stop: #f87171;
+    --stop-bg: #2a0f0f;
+    --stop-border: #4a1a1a;
+
+    --accent: #a78bfa;
+    --warning: #f97316;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    padding: 48px 32px 80px;
+  }
+
+  /* ─── HEADER ─────────────────────────────────────────── */
+  .header {
+    max-width: 960px;
+    margin: 0 auto 0;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 24px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards;
+  }
+
+  .header-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .header h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 32px;
+    font-weight: 400;
+    line-height: 1.15;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+
+  .header h1 em {
+    font-style: italic;
+    color: var(--text-muted);
+  }
+
+  .header-meta {
+    text-align: right;
+  }
+
+  .header-meta .team {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .header-meta .date {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+  }
+
+  /* ─── VALUE CONTEXT BAR ──────────────────────────────── */
+  .value-bar {
+    max-width: 960px;
+    margin: 0 auto 48px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px;
+    align-items: center;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.05s forwards;
+  }
+
+  .value-item {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  .value-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .value-value {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+  }
+
+  .value-value.high {
+    color: var(--stop);
+  }
+
+  .value-divider {
+    width: 1px;
+    height: 14px;
+    background: var(--border);
+    flex-shrink: 0;
+  }
+
+  /* ─── LEGEND ─────────────────────────────────────────── */
+  .legend {
+    max-width: 960px;
+    margin: 0 auto 48px;
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.1s forwards;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ─── SECTION LABEL ──────────────────────────────────── */
+  .section-label {
+    max-width: 960px;
+    margin: 0 auto 20px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+
+  /* ─── WORKFLOW STEPS ─────────────────────────────────── */
+  .workflow {
+    max-width: 960px;
+    margin: 0 auto 56px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .step {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    opacity: 0;
+    animation: fadeUp 0.5s ease forwards;
+  }
+
+  .step:nth-child(1) { animation-delay: 0.15s; }
+  .step:nth-child(2) { animation-delay: 0.22s; }
+  .step:nth-child(3) { animation-delay: 0.29s; }
+  .step:nth-child(4) { animation-delay: 0.36s; }
+  .step:nth-child(5) { animation-delay: 0.43s; }
+
+  .step-top {
+    display: grid;
+    grid-template-columns: 40px 1fr auto 52px;
+    align-items: stretch;
+    background: var(--surface);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .step-top:hover {
+    background: var(--surface2);
+  }
+
+  .step-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    border-right: 1px solid var(--border);
+    padding: 16px 0;
+  }
+
+  .step-main {
+    padding: 16px 20px;
+  }
+
+  .step-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 4px;
+    letter-spacing: -0.01em;
+  }
+
+  .step-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  .step-tags {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 16px 12px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  /* ─── TAGS ───────────────────────────────────────────── */
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+
+  .tag-automate { background: var(--automate-bg); color: var(--automate); border: 1px solid var(--automate-border); }
+  .tag-augment  { background: var(--augment-bg);  color: var(--augment);  border: 1px solid var(--augment-border); }
+  .tag-human    { background: var(--human-bg);    color: var(--human);    border: 1px solid var(--human-border); }
+  .tag-stop     { background: var(--stop-bg);     color: var(--stop);     border: 1px solid var(--stop-border); }
+
+  .badge-provisional {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 3px;
+    white-space: nowrap;
+    color: var(--text-muted);
+    border: 1px dashed var(--border-light);
+    background: transparent;
+  }
+
+  .badge-conditional {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 3px;
+    white-space: nowrap;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    background: transparent;
+  }
+
+  /* ─── EXPAND TOGGLE ──────────────────────────────────── */
+  .toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 20px;
+    border-left: 1px solid var(--border);
+    cursor: pointer;
+    color: var(--text-dim);
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color 0.15s;
+    user-select: none;
+    min-width: 52px;
+  }
+
+  .toggle:hover { color: var(--text-muted); }
+
+  .toggle-icon {
+    font-size: 14px;
+    transition: transform 0.2s;
+    line-height: 1;
+  }
+
+  .toggle.open .toggle-icon { transform: rotate(45deg); }
+
+  /* ─── JUDGMENT LAYER ─────────────────────────────────── */
+  .judgment-layer {
+    display: none;
+    background: #111316;
+    border-top: 1px solid var(--border);
+    padding: 20px 20px 20px 60px;
+  }
+
+  .judgment-layer.open {
+    display: block;
+  }
+
+  .judgment-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    opacity: 0.7;
+  }
+
+  .judgment-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .judgment-col h4 {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+
+  .judgment-col ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .judgment-col ul li {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    padding-left: 12px;
+    position: relative;
+  }
+
+  .judgment-col ul li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--text-dim);
+    font-size: 10px;
+  }
+
+  .provisional-note {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-top: 14px;
+  }
+
+  .conditional-note {
+    margin-top: 14px;
+    padding: 10px 14px;
+    border-left: 2px solid var(--accent);
+    background: rgba(167, 139, 250, 0.05);
+    border-radius: 0 3px 3px 0;
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.55;
+  }
+
+  .conditional-note strong {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  /* ─── OPPORTUNITY ROW ────────────────────────────────── */
+  .opportunity-row {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .opp-block {
+    flex: 1 1 200px;
+    padding: 12px 14px;
+    border-radius: 4px;
+    border: 1px solid;
+  }
+
+  .opp-block.automate { background: var(--automate-bg); border-color: var(--automate-border); }
+  .opp-block.augment  { background: var(--augment-bg);  border-color: var(--augment-border); }
+  .opp-block.human    { background: var(--human-bg);    border-color: var(--human-border); }
+  .opp-block.stop     { background: var(--stop-bg);     border-color: var(--stop-border); }
+
+  .opp-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .opp-block.automate .opp-label { color: var(--automate); }
+  .opp-block.augment  .opp-label { color: var(--augment); }
+  .opp-block.human    .opp-label { color: var(--human); }
+  .opp-block.stop     .opp-label { color: var(--stop); }
+
+  .opp-text {
+    font-size: 11px;
+    line-height: 1.55;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+
+  /* ─── AI STATUS ──────────────────────────────────────── */
+  .ai-status {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 3px;
+    margin-top: 8px;
+    display: inline-block;
+  }
+
+  .status-working {
+    color: var(--automate);
+    background: var(--automate-bg);
+    border: 1px solid var(--automate-border);
+  }
+
+  .status-guardrails {
+    color: var(--warning);
+    background: rgba(249, 115, 22, 0.08);
+    border: 1px dashed var(--warning);
+  }
+
+  .status-reconsider {
+    color: var(--stop);
+    background: var(--stop-bg);
+    border: 1px solid var(--stop-border);
+  }
+
+  /* ─── RISK CALLOUT ───────────────────────────────────── */
+  .risk-toggle {
+    display: block;
+    margin-top: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    cursor: pointer;
+    padding: 6px 0 2px;
+    border-top: 1px solid rgba(255,255,255,0.04);
+    user-select: none;
+    transition: color 0.15s;
+  }
+
+  .risk-toggle .risk-icon { color: var(--warning); }
+  .risk-toggle:hover { color: var(--text-muted); }
+
+  .risk-content {
+    display: none;
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.55;
+    padding: 8px 0 4px 12px;
+    border-left: 1px solid var(--border);
+    margin-top: 4px;
+  }
+
+  .risk-content.open { display: block; }
+
+  /* ─── SUMMARY ────────────────────────────────────────── */
+  .summary {
+    max-width: 960px;
+    margin: 0 auto 56px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.6s forwards;
+  }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 3px;
+  }
+
+  .summary-card {
+    padding: 20px;
+    border-radius: 4px;
+    border: 1px solid;
+  }
+
+  .summary-card.automate { background: var(--automate-bg); border-color: var(--automate-border); }
+  .summary-card.augment  { background: var(--augment-bg);  border-color: var(--augment-border); }
+  .summary-card.human    { background: var(--human-bg);    border-color: var(--human-border); }
+  .summary-card.stop     { background: var(--stop-bg);     border-color: var(--stop-border); }
+
+  .summary-card .card-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .summary-card.automate .card-label { color: var(--automate); }
+  .summary-card.augment  .card-label { color: var(--augment); }
+  .summary-card.human    .card-label { color: var(--human); }
+  .summary-card.stop     .card-label { color: var(--stop); }
+
+  .summary-card .card-count {
+    font-family: 'Instrument Serif', serif;
+    font-size: 36px;
+    line-height: 1;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+
+  .summary-card .card-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  /* ─── MEASUREMENT BASELINE ───────────────────────────── */
+  .measure {
+    max-width: 960px;
+    margin: 0 auto 48px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.75s forwards;
+  }
+
+  .measure-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .measure-header h3 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--text);
+  }
+
+  .measure-header span {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+  }
+
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3px;
+  }
+
+  .metric {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 18px 20px;
+  }
+
+  .metric-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .metric-baseline {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+    line-height: 1.4;
+  }
+
+  .metric-target {
+    font-size: 12px;
+    color: var(--augment);
+    line-height: 1.4;
+  }
+
+  .metric-arrow {
+    color: var(--text-dim);
+    margin: 2px 0 4px;
+    font-size: 10px;
+  }
+
+  /* ─── SKILLS SECTION ─────────────────────────────────── */
+  .skills {
+    max-width: 960px;
+    margin: 0 auto 48px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.85s forwards;
+  }
+
+  .skills-header {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+  }
+
+  .skills-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .skill-entry {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 20px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .skill-entry:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .skill-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    padding-top: 1px;
+  }
+
+  .skill-why {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  /* ─── FOOTER NOTE ────────────────────────────────────── */
+  .footer-note {
+    max-width: 960px;
+    margin: 40px auto 0;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+    line-height: 1.6;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.95s forwards;
+  }
+
+  /* ─── RECOMMENDED AUDITS ─────────────────────────────── */
+  .next-audits {
+    max-width: 960px;
+    margin: 32px auto 0;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    opacity: 0;
+    animation: fadeUp 0.6s ease 1.0s forwards;
+  }
+
+  .next-audits-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+  }
+
+  .audit-item {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin-bottom: 6px;
+  }
+
+  .audit-item strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  /* ─── ANIMATIONS ─────────────────────────────────────── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── RESPONSIVE ─────────────────────────────────────── */
+  @media (max-width: 640px) {
+    body { padding: 32px 16px 60px; }
+    .header { grid-template-columns: 1fr; }
+    .header-meta { text-align: left; }
+    .step-top { grid-template-columns: 36px 1fr auto; }
+    .judgment-grid { grid-template-columns: 1fr; }
+    .opportunity-row { flex-direction: column; }
+    .skill-entry { grid-template-columns: 1fr; gap: 6px; }
+    .summary-grid { grid-template-columns: repeat(2, 1fr); }
+    .metrics-grid { grid-template-columns: 1fr; }
+    .value-bar { gap: 16px; }
+    .value-divider { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ──────────────────────────────────────────── -->
+<header class="header">
+  <div>
+    <div class="header-label">AI Opportunity Map</div>
+    <h1>Internal Content Approval Process<br><em>What's visible. What can change.</em></h1>
+  </div>
+  <div class="header-meta">
+    <div class="team">Corporate Communications</div>
+    <div class="date">June 2026</div>
+  </div>
+</header>
+
+<!-- ── VALUE CONTEXT BAR ───────────────────────────────── -->
+<div class="value-bar">
+  <div class="value-item">
+    <span class="value-label">Consequence of failure</span>
+    <span class="value-value high">High</span>
+  </div>
+  <div class="value-divider"></div>
+  <div class="value-item">
+    <span class="value-label">Volume</span>
+    <span class="value-value">30–50 pieces per week; spikes during launches</span>
+  </div>
+  <div class="value-divider"></div>
+  <div class="value-item">
+    <span class="value-label">Capacity consumed</span>
+    <span class="value-value">~50–60% of 6-person comms team</span>
+  </div>
+  <div class="value-divider"></div>
+  <div class="value-item">
+    <span class="value-label">Internal submitters</span>
+    <span class="value-value">15–20 creators across functions</span>
+  </div>
+</div>
+
+<!-- ── LEGEND ──────────────────────────────────────────── -->
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:var(--automate)"></div>Automate</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--augment)"></div>Augment</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--human)"></div>Keep human</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--stop)"></div>Stop / rethink</div>
+  <div class="legend-item" style="margin-left:auto; color: var(--text-dim)">↓ Expand each step to see the judgment layer</div>
+</div>
+
+<div class="section-label">Workflow Steps</div>
+
+<div class="workflow">
+
+  <!-- ── STEP 1: CONTENT SUBMISSION ─────────────────── -->
+  <div class="step">
+    <div class="step-top" onclick="toggleStep(this)">
+      <div class="step-number">01</div>
+      <div class="step-main">
+        <div class="step-name">Content Submission</div>
+        <div class="step-desc">Creator submits draft via Google Drive with intake form metadata</div>
+      </div>
+      <div class="step-tags">
+        <span class="tag tag-automate">Automate</span>
+        <span class="tag tag-stop">Stop / Rethink</span>
+      </div>
+      <div class="toggle"><span class="toggle-icon">+</span></div>
+    </div>
+    <div class="judgment-layer">
+      <div class="judgment-label">Hidden judgment layer</div>
+      <div class="judgment-grid">
+        <div class="judgment-col">
+          <h4>What actually happens here</h4>
+          <ul>
+            <li>Creator completes a standardized intake form (content type, channel, publish date, sensitivity flags) and drops the draft into a shared Google Drive folder</li>
+            <li>The process is well-documented; a new person would get it right if they follow the form</li>
+            <li>Informally, some creators Slack the comms lead to flag urgency before submitting — this effectively jumps the queue 2–3 times per week without being a formal process</li>
+          </ul>
+        </div>
+        <div class="judgment-col">
+          <h4>Where it breaks down</h4>
+          <ul>
+            <li>Submissions arrive without the intake form completed, requiring the reviewer to chase metadata before review can start</li>
+            <li>Cross-functional submitters (product marketing, sales enablement) bypass Google Drive entirely — sending via email or Slack — which breaks tracking</li>
+            <li>The informal urgency Slack creates a shadow queue that isn't visible to everyone and has no documented criteria</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="opportunity-row">
+        <div class="opp-block automate">
+          <div class="opp-label">Automate</div>
+          <div class="opp-text">Intake validation and queue entry: automatically check submitted drafts for form completeness before they enter the review queue. Flag missing fields and bounce back to the submitter with a clear request — no reviewer time spent chasing metadata. Also: auto-confirm receipt, log to queue with metadata, and surface estimated review window based on current load.</div>
+          <span class="risk-toggle" onclick="toggleRisk(this)"><span class="risk-icon">⚠</span> Watch for</span>
+          <div class="risk-content">Brittleness: this automation depends on a consistent submission channel (Google Drive + intake form). It will silently fail when submitters bypass the channel via email or Slack. The automation cannot catch what it never sees. Fix the channel problem first — or build a parallel intake bot that can accept submissions from multiple surfaces.</div>
+        </div>
+        <div class="opp-block stop">
+          <div class="opp-label">Stop / Rethink</div>
+          <div class="opp-text">The informal Slack queue-jump: 2–3 times per week, urgency is communicated through a back-channel that has no documented criteria and isn't visible to the full team. This is not a submission variant — it's a process hole. Automating intake validation without addressing this would create a clean formal queue running parallel to an unaccountable informal one. The informal practice should be replaced with a documented urgency tier in the intake form before any automation is applied to prioritization.</div>
+          <span class="risk-toggle" onclick="toggleRisk(this)"><span class="risk-icon">⚠</span> Watch for</span>
+          <div class="risk-content">Automation trap: do not build priority routing logic into the intake automation until the urgency criteria are documented. Automating undocumented priority rules would encode the current informal practice into the system — harder to change later and invisible to anyone who didn't know about the original back-channel.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── STEP 2: EDITORIAL REVIEW ───────────────────── -->
+  <div class="step">
+    <div class="step-top" onclick="toggleStep(this)">
+      <div class="step-number">02</div>
+      <div class="step-main">
+        <div class="step-name">Editorial Review</div>
+        <div class="step-desc">Editor reviews drafts for brand, tone, accuracy, and strategic alignment</div>
+      </div>
+      <div class="step-tags">
+        <span class="tag tag-augment">Augment</span>
+        <span class="tag tag-human">Keep Human</span>
+        <span class="badge-provisional">Provisional</span>
+      </div>
+      <div class="toggle"><span class="toggle-icon">+</span></div>
+    </div>
+    <div class="judgment-layer">
+      <div class="judgment-label">Hidden judgment layer</div>
+      <div class="judgment-grid">
+        <div class="judgment-col">
+          <h4>What actually happens here</h4>
+          <ul>
+            <li>The editor applies different treatment by content type — blog, customer email, and social each get a different level of review — but the criteria for each are not documented</li>
+            <li>A style guide exists but doesn't cover everything; "sounds right for the brand" is the operative standard</li>
+            <li>The editor tracks what the exec team cares about this week — strategic messaging priorities that change and aren't formally communicated down</li>
+            <li>The comms lead reviews sensitive pieces, though what qualifies as "sensitive" is also undocumented</li>
+          </ul>
+        </div>
+        <div class="judgment-col">
+          <h4>Where it breaks down</h4>
+          <ul>
+            <li>Drafts get sent back multiple times with feedback that isn't always specific enough to act on</li>
+            <li>Output consistency depends on who's reviewing — the editor's judgment isn't systematically the same across all content types</li>
+            <li>During launches, review volume exceeds capacity — the editor spends 20–25 hours per week on review alone during normal weeks, and more during spikes</li>
+            <li>No documented quality standard exists for AI to check against, and the criteria that do exist live in the editor's and comms lead's heads</li>
+          </ul>
+        </div>
+      </div>
+
+      <p class="provisional-note">This classification is provisional — see gap report for what's missing.</p>
+
+      <div class="opportunity-row">
+        <div class="opp-block augment">
+          <div class="opp-label">Augment</div>
+          <div class="opp-text">Pre-review triage: before the editor opens a draft, AI checks it against the existing style guide and flags structural issues — grammar, prohibited language, missing CTAs, overly long sentences, format problems by content type. This handles the mechanical layer of review and surfaces specific issues with locations, so the editor's attention can go to judgment rather than hunting. A style guide already exists; AI can operationalize it immediately, even before deeper criteria are documented.</div>
+          <span class="risk-toggle" onclick="toggleRisk(this)"><span class="risk-icon">⚠</span> Watch for</span>
+          <div class="risk-content">Context drift: the style guide AI checks against will gradually become outdated if it isn't owned and maintained. Assign a specific owner and a review cadence — otherwise AI will confidently flag things the team stopped caring about and miss things they started caring about. Also watch for anchoring: if AI flags a list of issues before the editor reads the draft, the editor's judgment may be unconsciously shaped by what AI found first. Consider having editors note their preliminary read before reviewing the AI triage output.</div>
+        </div>
+        <div class="opp-block human">
+          <div class="opp-label">Keep Human</div>
+          <div class="opp-text">Final editorial judgment: brand voice beyond what's in the style guide, exec-priority alignment, tone calibration by audience and moment, and the call on what goes back vs. what goes through. This judgment layer is real — the editor can identify what's wrong but often can't fully articulate the criteria in advance. Until the tacit standards that drive these calls are externalized and documented, AI cannot reliably assist with them. The risk of a plausible-but-wrong AI editorial call reaching the approval queue is too high given the downstream consequences.</div>
+          <span class="risk-toggle" onclick="toggleRisk(this)"><span class="risk-icon">⚠</span> Watch for</span>
+          <div class="risk-content">Key-person dependency: the editorial judgment that makes this step work lives primarily with the editor and comms lead. If either is unavailable during a launch week, the workflow stalls. The judgment isn't documented, can't be delegated, and can't be backed up. Even if AI augmentation doesn't expand here, the team should invest in knowledge codification — not to automate, but so the judgment isn't fragile.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── STEP 3: REVISION & RESUBMISSION ────────────── -->
+  <div class="step">
+    <div class="step-top" onclick="toggleStep(this)">
+      <div class="step-number">03</div>
+      <div class="step-main">
+        <div class="step-name">Revision &amp; Resubmission</div>
+        <div class="step-desc">Author addresses editorial feedback and resubmits for another review pass</div>
+      </div>
+      <div class="step-tags">
+        <span class="tag tag-augment">Augment</span>
+        <span class="tag tag-stop">Stop / Rethink</span>
+      </div>
+      <div class="toggle"><span class="toggle-icon">+</span></div>
+    </div>
+    <div class="judgment-layer">
+      <div class="judgment-label">Hidden judgment layer</div>
+      <div class="judgment-grid">
+        <div class="judgment-col">
+          <h4>What actually happens here</h4>
+          <ul>
+            <li>The author receives tracked changes and/or comments, makes the requested changes, and resubmits</li>
+            <li>Some writers already use ChatGPT to help rewrite sections — pasting the editorial feedback and original text and asking for a revised version</li>
+            <li>No one tracks when AI-assisted revision is happening, and there's no quality check specific to AI-revised content</li>
+            <li>The judgment on whether the revision addressed the feedback lives with the editor, not the author — the author's job here is largely procedural</li>
+          </ul>
+        </div>
+        <div class="judgment-col">
+          <h4>Where it breaks down</h4>
+          <ul>
+            <li>Revision cycles multiply: the author makes changes, the editor finds new issues, and the comms lead sometimes introduces new feedback in round 2 or 3 that could have been given in round 1</li>
+            <li>No agreed limit on revision rounds — cycles can extend indefinitely</li>
+            <li>Vague editorial feedback leads to revisions that miss the point, requiring another round</li>
+            <li>Late-entry reviewers (comms lead appearing for the first time in round 3) restart the cycle after the author thought they were close</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="opportunity-row">
+        <div class="opp-block augment">
+          <div class="opp-label">Augment</div>
+          <div class="opp-text">Author-side revision assistance: AI helps authors interpret editorial feedback and rewrite specific sections. This is already happening informally — the opportunity is to formalize and guardrail it rather than let it run untracked. A structured revision prompt (original text + specific feedback + brand context) produces more targeted revisions than ad-hoc ChatGPT use. The editor then reviews the revised version against the original feedback, not against general judgment — which speeds re-review.</div>
+          <div class="ai-status status-guardrails">In use — needs guardrails</div>
+          <span class="risk-toggle" onclick="toggleRisk(this)"><span class="risk-icon">⚠</span> Watch for</span>
+          <div class="risk-content">Missing review layer: AI-revised content is currently being resubmitted without anyone checking whether the revision was done well or whether it introduced new problems. The editor reviews the final version, but doesn't know which sections came from AI. Consider a lightweight disclosure practice — "AI-assisted sections marked" — so the editor can calibrate review depth appropriately. Also watch for quality erosion: if AI revisions routinely pass review, the standard may quietly lower over time because the work "looks right."</div>
+        </div>
+        <div class="opp-block stop">
+          <div class="opp-label">Stop / Rethink</div>
+          <div class="opp-text">The unlimited revision cycle: there is no agreed maximum number of review rounds, no requirement that all stakeholders give feedback in round 1, and no structured feedback format that specifies what must change vs. what's optional. This is not an AI opportunity — it's a process design problem. Until a revision protocol exists (stakeholder input upfront, clear feedback format, a round limit with an escalation path), adding AI to revision will only make broken cycles faster. Fix the process; then apply AI to the author-side assistance within it.</div>
+          <span class="risk-toggle" onclick="toggleRisk(this)"><span class="risk-icon">⚠</span> Watch for</span>
+          <div class="risk-content">Automation trap rule applies: the unlimited revision cycle is the broken sub-element here. Do not apply automation or AI-assisted tooling to the revision loop itself (e.g., auto-resubmission triggers, revision tracking dashboards) until the cycle has stopping criteria. Automating around a broken loop scales the problem.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── STEP 4: APPROVAL ────────────────────────────── -->
+  <div class="step">
+    <div class="step-top" onclick="toggleStep(this)">
+      <div class="step-number">04</div>
+      <div class="step-main">
+        <div class="step-name">Approval</div>
+        <div class="step-desc">Reviewed draft cleared for publication by the appropriate approver(s)</div>
+      </div>
+      <div class="step-tags">
+        <span class="tag tag-stop">Stop / Rethink</span>
+        <span class="badge-conditional">Conditional</span>
+      </div>
+      <div class="toggle"><span class="toggle-icon">+</span></div>
+    </div>
+    <div class="judgment-layer">
+      <div class="judgment-label">Hidden judgment layer</div>
+      <div class="judgment-grid">
+        <div class="judgment-col">
+          <h4>What actually happens here</h4>
+          <ul>
+            <li>The editor decides the draft is ready and routes it for approval — but the routing rules are undocumented</li>
+            <li>Different content types require different approvers (comms lead, director, legal), but the criteria for which content goes where aren't written down anywhere</li>
+            <li>What qualifies as "legally sensitive" for a legal review is undefined — the determination is made case-by-case based on who happens to be reviewing</li>
+            <li>The same content type can receive different scrutiny depending on who's approving and what week it is</li>
+          </ul>
+        </div>
+        <div class="judgment-col">
+          <h4>Where it breaks down</h4>
+          <ul>
+            <li>Content sits waiting for approval because it's not clear whose inbox it should be in</li>
+            <li>Approval delays are the number one complaint from content creators — the most painful step in the entire workflow</li>
+            <li>Multiple approvers are sometimes involved without clear sequencing, so content bounces between reviewers</li>
+            <li>The error cost here is potentially high: approved content that shouldn't have been (legal risk, off-brand, factually wrong) creates reputational and compliance exposure</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="conditional-note">
+        <strong>Conditional:</strong> The Augment opportunity at this step depends entirely on whether documented approval criteria exist. If the comms team defines an approval decision matrix — which content types require which approvers, what triggers legal review, what constitutes "director-level" content — AI can pre-check content against those criteria before routing and flag likely approval issues in advance. Until those criteria are documented, AI assistance here would produce plausible-but-ungrounded recommendations. The current state is Stop / Rethink. The conditional classification becomes actionable only after that redesign work is done.
+      </div>
+
+      <div class="opportunity-row">
+        <div class="opp-block stop">
+          <div class="opp-label">Stop / Rethink</div>
+          <div class="opp-text">The undocumented approval routing: who approves what content, what triggers legal review, and whether the comms lead or director is needed — none of this is written down. The result is inconsistent scrutiny, approval delays, and a step that should be a checklist running as a judgment call every time. This needs to be redesigned into a documented decision matrix before any AI is applied here. Automating undocumented routing rules would encode the current inconsistency into the system and make it harder to correct.</div>
+          <span class="risk-toggle" onclick="toggleRisk(this)"><span class="risk-icon">⚠</span> Watch for</span>
+          <div class="risk-content">Hidden dependencies: before redesigning the approval step, confirm with legal and leadership what compliance requirements are implicitly being met by the current ad-hoc review practice. The inconsistency feels like a problem from the inside, but the informal legal check may be catching real risks. Stopping or systematizing it without understanding what it currently catches could create compliance gaps that weren't visible before.</div>
+        </div>
+        <div class="opp-block augment">
+          <div class="opp-label">Augment <span style="font-weight:300; text-transform:none; font-family:'DM Sans'; font-size:10px; color:var(--accent)">— conditional</span></div>
+          <div class="opp-text">Once approval criteria are documented: AI pre-checks content against the approval decision matrix before routing — flags content likely to require legal review, identifies off-brand claims the director should see, and routes automatically to the correct approver. This compresses the most painful step in the workflow from "figure out whose job this is" to "confirm the AI routing is correct." But this is a downstream opportunity. The Stop / Rethink work comes first.</div>
+          <span class="risk-toggle" onclick="toggleRisk(this)"><span class="risk-icon">⚠</span> Watch for</span>
+          <div class="risk-content">Plausible-but-wrong: an AI that confidently routes content to the wrong approver is worse than the current state — it creates false certainty. The AI routing recommendation must be treated as a draft for human confirmation, not a final decision, until the routing criteria have been tested and validated. Do not remove the human confirmation step from approval routing, even after criteria are documented.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── STEP 5: PUBLICATION ─────────────────────────── -->
+  <div class="step">
+    <div class="step-top" onclick="toggleStep(this)">
+      <div class="step-number">05</div>
+      <div class="step-main">
+        <div class="step-name">Publication</div>
+        <div class="step-desc">Approved content published to target channels (blog, social, email, partner portal)</div>
+      </div>
+      <div class="step-tags">
+        <span class="tag tag-automate">Automate</span>
+        <span class="tag tag-augment">Augment</span>
+        <span class="tag tag-human">Keep Human</span>
+      </div>
+      <div class="toggle"><span class="toggle-icon">+</span></div>
+    </div>
+    <div class="judgment-layer">
+      <div class="judgment-label">Hidden judgment layer</div>
+      <div class="judgment-grid">
+        <div class="judgment-col">
+          <h4>What actually happens here</h4>
+          <ul>
+            <li>Approved content is manually reformatted for each channel — copy-pasting between platforms and adjusting for character limits, image specs, and CTA placement</li>
+            <li>The social media manager uses an AI feature in the scheduling tool to suggest optimal posting times; she overrides it ~20% of the time based on her own sense of when the audience is active</li>
+            <li>There's a channel formatting checklist, though it's slightly out of date</li>
+            <li>The social media manager's knowledge of optimal posting times is accurate but entirely undocumented</li>
+          </ul>
+        </div>
+        <div class="judgment-col">
+          <h4>Where it breaks down</h4>
+          <ul>
+            <li>Multi-channel reformatting is tedious and repetitive — the same content gets manually adjusted for each platform every time</li>
+            <li>Occasionally the wrong version gets published (pre-approval draft instead of final) — a versioning issue, not a judgment issue</li>
+            <li>Formatting errors occur when content moves between platforms; the checklist is slightly outdated</li>
+            <li>Publication is otherwise the smoothest step: once content is approved, it reliably gets published</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="opportunity-row">
+        <div class="opp-block automate">
+          <div class="opp-label">Automate</div>
+          <div class="opp-text">Multi-channel reformatting: from approved content, automatically generate channel-specific versions — social post within character limits, email subject line and preheader, blog meta description, partner portal format. The rules for each channel are documented (if slightly outdated — update the checklist first). This eliminates the copy-paste cycle and reduces the formatting error rate. The social media manager reviews before scheduling; the automation handles the mechanical adaptation.</div>
+          <span class="risk-toggle" onclick="toggleRisk(this)"><span class="risk-icon">⚠</span> Watch for</span>
+          <div class="risk-content">Brittleness: the reformatting automation depends on the channel specification checklist being current. If the checklist is outdated and the automation is built from it, the automation will confidently produce incorrectly formatted content. Update the checklist before building the automation — not after.</div>
+        </div>
+        <div class="opp-block augment">
+          <div class="opp-label">Augment</div>
+          <div class="opp-text">AI-assisted posting time optimization in the scheduling tool — already in use and working. The social media manager has calibrated the AI's recommendations against her own audience knowledge, maintains active override judgment (~20% override rate), and uses the tool as an input rather than a final answer. This is a functional human-AI collaboration pattern. No changes recommended; continue and monitor for drift toward over-reliance as the tool is used longer.</div>
+          <div class="ai-status status-working">In use — working</div>
+        </div>
+        <div class="opp-block human">
+          <div class="opp-label">Keep Human</div>
+          <div class="opp-text">Final pre-publish review: confirming the correct version (approved, not draft), the correct channel, and that formatting is right before content goes live. This is the last error-detection checkpoint before external audiences see the content. Given that wrong-version publication has happened before, and given the reputational cost of a bad post at scale, the human review gate at publication should be maintained even after reformatting is automated.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /workflow -->
+
+<div class="section-label">Summary</div>
+
+<div class="summary">
+  <div class="summary-grid">
+    <div class="summary-card automate">
+      <div class="card-label">Automate</div>
+      <div class="card-count">2</div>
+      <div class="card-desc">Intake validation and queue entry (Step 1); multi-channel reformatting (Step 5)</div>
+    </div>
+    <div class="summary-card augment">
+      <div class="card-label">Augment</div>
+      <div class="card-count">3</div>
+      <div class="card-desc">Pre-review triage (Step 2); author revision assistance (Step 3, needs guardrails); posting time optimization (Step 5, working)</div>
+    </div>
+    <div class="summary-card human">
+      <div class="card-label">Keep Human</div>
+      <div class="card-count">2</div>
+      <div class="card-desc">Final editorial judgment (Step 2); pre-publish version confirmation (Step 5)</div>
+    </div>
+    <div class="summary-card stop">
+      <div class="card-label">Stop / Rethink</div>
+      <div class="card-count">3</div>
+      <div class="card-desc">Informal queue-jumping (Step 1); unlimited revision cycles with late-entry reviewers (Step 3); undocumented approval routing (Step 4)</div>
+    </div>
+  </div>
+</div>
+
+<div class="section-label">Measurement Baseline</div>
+
+<div class="measure">
+  <div class="measure-header">
+    <h3>How we'll know it worked</h3>
+    <span>Baseline → target</span>
+  </div>
+  <div class="metrics-grid">
+    <div class="metric">
+      <div class="metric-name">Draft-to-published cycle time</div>
+      <div class="metric-baseline">Baseline: stated target is 48h standard / 24h urgent — actual cycle time during peak weeks is longer and not tracked</div>
+      <div class="metric-arrow">↓</div>
+      <div class="metric-target">Target: 48h standard / 24h urgent achieved consistently, including during launch weeks</div>
+    </div>
+    <div class="metric">
+      <div class="metric-name">Revision rounds per piece</div>
+      <div class="metric-baseline">Baseline: not currently tracked; anecdotally, multiple rounds are common and cycles with no stopping criteria occur regularly</div>
+      <div class="metric-arrow">↓</div>
+      <div class="metric-target">Target: ≤2 rounds for standard content; escalation path defined for anything requiring a third round</div>
+    </div>
+    <div class="metric">
+      <div class="metric-name">Approval wait time</div>
+      <div class="metric-baseline">Baseline: described as the single largest pain point; no time data tracked; routing uncertainty adds unquantified delay before approval even begins</div>
+      <div class="metric-arrow">↓</div>
+      <div class="metric-target">Target: ≤24h from editorial sign-off to approval decision, with routing uncertainty eliminated by documented decision matrix</div>
+    </div>
+  </div>
+</div>
+
+<div class="section-label">Skills to Act on This Map</div>
+
+<div class="skills">
+  <div class="skills-header">Capabilities needed to execute</div>
+  <div class="skills-list">
+
+    <div class="skill-entry">
+      <div class="skill-name">Knowledge Codification</div>
+      <div class="skill-why">The highest-leverage work before any AI can be applied to Steps 2 and 4. The editorial quality criteria, content-type review standards, and approval routing rules currently live in the editor's and comms lead's heads. Externalizing these — into a documented style expansion, a review rubric by content type, and a written approval decision matrix — is the precondition for augmentation. This is not a technology skill; it's a structured documentation process.</div>
+    </div>
+
+    <div class="skill-entry">
+      <div class="skill-name">Process Design</div>
+      <div class="skill-why">Three sub-elements are Stop / Rethink: the informal urgency queue-jump (Step 1), the unlimited revision cycle with late-entry reviewers (Step 3), and the undocumented approval routing (Step 4). These are process design problems, not AI problems. Each needs a redesigned protocol — an urgency tier in the intake form, a revision protocol with a round limit and front-loaded stakeholder input, and an approval decision matrix — before any AI opportunity in those areas becomes viable.</div>
+    </div>
+
+    <div class="skill-entry">
+      <div class="skill-name">Workflow Automation Design</div>
+      <div class="skill-why">Intake validation and queue entry (Step 1) and multi-channel reformatting (Step 5) are ready to automate once the intake channel is consolidated and the channel checklist is updated. Both require mapping triggers, conditions, and actions across the tools already in use (Google Drive, scheduling tools, email platforms). The scope is well-defined — this is integration work more than AI work.</div>
+    </div>
+
+    <div class="skill-entry">
+      <div class="skill-name">Prompt Engineering</div>
+      <div class="skill-why">The pre-review triage in Step 2 and the author revision assistance in Step 3 both require prompts that are grounded in the documented standards that knowledge codification produces. Generic AI prompts won't work here — the prompts need to reference the specific style guide, content-type criteria, and feedback format the team defines. Prompt engineering in this context means building reliable assistants that check against the team's own standards, not general writing best practices.</div>
+    </div>
+
+    <div class="skill-entry">
+      <div class="skill-name">Quality Evaluation Design</div>
+      <div class="skill-why">The Step 2 Augment classification is Provisional specifically because no quality standard exists for AI to check against. Defining what "good" looks like per content type — in terms specific enough for AI to evaluate — is the prerequisite for meaningful augmentation in editorial review. This skill bridges knowledge codification (surfacing the criteria) and prompt engineering (building AI to apply them).</div>
+    </div>
+
+  </div>
+</div>
+
+<div class="footer-note">
+  One step (Step 2: Editorial Review) carries a Provisional classification. A gap report has been produced separately: content-approval-gap-report.md. Three sub-elements across Steps 1, 3, and 4 are classified Stop / Rethink. Per the automation trap rule, these sub-elements do not receive Automate classifications — automating a broken or undefined process scales the problem. The Stop / Rethink work at Steps 3 and 4 is foundational: revision cycles and approval routing are the two biggest bottlenecks in this workflow, and AI opportunity in both areas is conditional on that redesign happening first.
+</div>
+
+<div class="next-audits">
+  <div class="next-audits-label">Recommended next audits</div>
+  <div class="audit-item">
+    <strong>Editorial Review (Step 2) — sub-workflow audit.</strong> This step is currently Provisional because the judgment layer is thin: criteria for different content types aren't documented, what triggers a comms lead review isn't defined, and what makes feedback actionable vs. vague isn't captured. A sub-workflow audit focused on the editor's actual decision process — what they check first, what they check differently by content type, what they look for when the comms lead needs to see something — would produce a more precise Augment scope and unlock the knowledge codification work this map depends on.
+  </div>
+  <div class="audit-item">
+    <strong>Approval routing (Step 4) — decision matrix design session.</strong> The approval step cannot be classified beyond Stop / Rethink until someone maps what the approval criteria actually are. A structured session with the comms lead, director, and legal to surface the implicit routing rules — what content types require which approvers, what triggers legal, what constitutes director-level sensitivity — would convert a Conditional into a Confident classification and unlock the most impactful AI opportunity in this workflow.
+  </div>
+</div>
+
+<script>
+function toggleStep(topEl) {
+  const step = topEl.closest('.step');
+  const layer = step.querySelector('.judgment-layer');
+  const toggle = topEl.querySelector('.toggle');
+  const isOpen = layer.classList.contains('open');
+  layer.classList.toggle('open', !isOpen);
+  toggle.classList.toggle('open', !isOpen);
+}
+
+function toggleRisk(el) {
+  event.stopPropagation();
+  const content = el.nextElementSibling;
+  const isOpen = content.classList.contains('open');
+  content.classList.toggle('open', !isOpen);
+  el.innerHTML = isOpen
+    ? '<span class="risk-icon">⚠</span> Watch for'
+    : '<span class="risk-icon">⚠</span> Watch for ↑';
+}
+</script>
+</body>
+</html>

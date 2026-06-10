@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Opportunity Map — Instructional Design</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0e0f11;
+    --surface: #15171a;
+    --surface2: #1c1f23;
+    --border: #2a2d32;
+    --border-light: #323640;
+    --text: #e8e9eb;
+    --text-muted: #7a7f8a;
+    --text-dim: #4a4f5a;
+
+    --automate: #4ade80;
+    --automate-bg: #0d2b1a;
+    --automate-border: #1a4a2e;
+
+    --augment: #60a5fa;
+    --augment-bg: #0d1e35;
+    --augment-border: #1a3555;
+
+    --human: #f59e0b;
+    --human-bg: #2a1f08;
+    --human-border: #4a3510;
+
+    --stop: #f87171;
+    --stop-bg: #2a0f0f;
+    --stop-border: #4a1a1a;
+
+    --accent: #a78bfa;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    padding: 48px 32px 80px;
+  }
+
+  /* ─── HEADER ─────────────────────────────────────────── */
+  .header {
+    max-width: 960px;
+    margin: 0 auto 0;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 24px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards;
+  }
+
+  .header-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .header h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 32px;
+    font-weight: 400;
+    line-height: 1.15;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+
+  .header h1 em {
+    font-style: italic;
+    color: var(--text-muted);
+  }
+
+  .header-meta {
+    text-align: right;
+  }
+
+  .header-meta .team {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .header-meta .date {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+  }
+
+  /* ─── VALUE CONTEXT BAR ──────────────────────────────── */
+  .value-bar {
+    max-width: 960px;
+    margin: 0 auto 48px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px;
+    align-items: center;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.05s forwards;
+  }
+
+  .value-item {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  .value-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .value-value {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+  }
+
+  .value-value.high {
+    color: var(--stop);
+  }
+
+  .value-divider {
+    width: 1px;
+    height: 14px;
+    background: var(--border);
+    flex-shrink: 0;
+  }
+
+  /* ─── LEGEND ─────────────────────────────────────────── */
+  .legend {
+    max-width: 960px;
+    margin: 0 auto 48px;
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.1s forwards;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ─── SECTION LABEL ──────────────────────────────────── */
+  .section-label {
+    max-width: 960px;
+    margin: 0 auto 20px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+
+  /* ─── WORKFLOW STEPS ─────────────────────────────────── */
+  .workflow {
+    max-width: 960px;
+    margin: 0 auto 56px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .step {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    opacity: 0;
+    animation: fadeUp 0.5s ease forwards;
+  }
+
+  .step:nth-child(1) { animation-delay: 0.15s; }
+  .step:nth-child(2) { animation-delay: 0.22s; }
+  .step:nth-child(3) { animation-delay: 0.29s; }
+  .step:nth-child(4) { animation-delay: 0.36s; }
+  .step:nth-child(5) { animation-delay: 0.43s; }
+  .step:nth-child(6) { animation-delay: 0.50s; }
+
+  .step-top {
+    display: grid;
+    grid-template-columns: 40px 1fr auto;
+    align-items: stretch;
+    background: var(--surface);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .step-top:hover {
+    background: var(--surface2);
+  }
+
+  .step-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    border-right: 1px solid var(--border);
+    padding: 16px 0;
+  }
+
+  .step-main {
+    padding: 16px 20px;
+  }
+
+  .step-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 4px;
+    letter-spacing: -0.01em;
+  }
+
+  .step-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  .step-tags {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 16px 12px 16px 12px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  /* ─── TAGS ───────────────────────────────────────────── */
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+
+  .tag-automate { background: var(--automate-bg); color: var(--automate); border: 1px solid var(--automate-border); }
+  .tag-augment  { background: var(--augment-bg);  color: var(--augment);  border: 1px solid var(--augment-border); }
+  .tag-human    { background: var(--human-bg);    color: var(--human);    border: 1px solid var(--human-border); }
+  .tag-stop     { background: var(--stop-bg);     color: var(--stop);     border: 1px solid var(--stop-border); }
+
+  /* Confidence badges */
+  .badge-provisional {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 3px;
+    white-space: nowrap;
+    color: var(--text-muted);
+    border: 1px dashed var(--border-light);
+    background: transparent;
+  }
+
+  .badge-conditional {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 3px;
+    white-space: nowrap;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    background: transparent;
+  }
+
+  /* ─── EXPAND TOGGLE ──────────────────────────────────── */
+  .toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 20px;
+    border-left: 1px solid var(--border);
+    cursor: pointer;
+    color: var(--text-dim);
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color 0.15s;
+    user-select: none;
+    min-width: 52px;
+    justify-content: center;
+  }
+
+  .toggle:hover { color: var(--text-muted); }
+
+  .toggle-icon {
+    font-size: 14px;
+    transition: transform 0.2s;
+    line-height: 1;
+  }
+
+  .toggle.open .toggle-icon { transform: rotate(45deg); }
+
+  /* ─── JUDGMENT LAYER ─────────────────────────────────── */
+  .judgment-layer {
+    display: none;
+    background: #111316;
+    border-top: 1px solid var(--border);
+    padding: 20px 20px 20px 60px;
+  }
+
+  .judgment-layer.open {
+    display: block;
+  }
+
+  .judgment-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    opacity: 0.7;
+  }
+
+  .judgment-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  @media (max-width: 640px) {
+    .judgment-grid { grid-template-columns: 1fr; }
+  }
+
+  .judgment-col h4 {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+
+  .judgment-col ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .judgment-col ul li {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    padding-left: 12px;
+    position: relative;
+  }
+
+  .judgment-col ul li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--text-dim);
+    font-size: 10px;
+  }
+
+  /* Conditional note */
+  .conditional-note {
+    margin-top: 14px;
+    padding: 10px 14px;
+    border-left: 2px solid var(--accent);
+    background: rgba(167, 139, 250, 0.05);
+    border-radius: 0 3px 3px 0;
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.55;
+  }
+
+  .conditional-note strong {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  /* ─── OPPORTUNITY ROW ────────────────────────────────── */
+  .opportunity-row {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .opp-block {
+    flex: 1 1 200px;
+    padding: 12px 14px;
+    border-radius: 4px;
+    border: 1px solid;
+  }
+
+  .opp-block.automate { background: var(--automate-bg); border-color: var(--automate-border); }
+  .opp-block.augment  { background: var(--augment-bg);  border-color: var(--augment-border); }
+  .opp-block.human    { background: var(--human-bg);    border-color: var(--human-border); }
+  .opp-block.stop     { background: var(--stop-bg);     border-color: var(--stop-border); }
+
+  .opp-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .opp-block.automate .opp-label { color: var(--automate); }
+  .opp-block.augment  .opp-label { color: var(--augment); }
+  .opp-block.human    .opp-label { color: var(--human); }
+  .opp-block.stop     .opp-label { color: var(--stop); }
+
+  .opp-text {
+    font-size: 11px;
+    line-height: 1.55;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+
+  /* ─── RISK CALLOUT ───────────────────────────────────── */
+  .risk-toggle {
+    display: block;
+    margin-top: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    cursor: pointer;
+    padding: 6px 0 2px;
+    border-top: 1px solid rgba(255,255,255,0.04);
+    user-select: none;
+    transition: color 0.15s;
+  }
+
+  .risk-toggle .risk-icon {
+    color: #f97316;
+  }
+
+  .risk-toggle:hover {
+    color: var(--text-muted);
+  }
+
+  .risk-content {
+    display: none;
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.55;
+    padding: 8px 0 4px 12px;
+    border-left: 1px solid var(--border);
+    margin-top: 4px;
+  }
+
+  .risk-content.open {
+    display: block;
+  }
+
+  /* ─── SUMMARY ────────────────────────────────────────── */
+  .summary {
+    max-width: 960px;
+    margin: 0 auto 56px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.6s forwards;
+  }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 3px;
+  }
+
+  @media (max-width: 600px) {
+    .summary-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .summary-card {
+    padding: 20px;
+    border-radius: 4px;
+    border: 1px solid;
+  }
+
+  .summary-card.automate { background: var(--automate-bg); border-color: var(--automate-border); }
+  .summary-card.augment  { background: var(--augment-bg);  border-color: var(--augment-border); }
+  .summary-card.human    { background: var(--human-bg);    border-color: var(--human-border); }
+  .summary-card.stop     { background: var(--stop-bg);     border-color: var(--stop-border); }
+
+  .summary-card .card-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .summary-card.automate .card-label { color: var(--automate); }
+  .summary-card.augment  .card-label { color: var(--augment); }
+  .summary-card.human    .card-label { color: var(--human); }
+  .summary-card.stop     .card-label { color: var(--stop); }
+
+  .summary-card .card-count {
+    font-family: 'Instrument Serif', serif;
+    font-size: 36px;
+    line-height: 1;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+
+  .summary-card .card-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  /* ─── MEASUREMENT BASELINE ───────────────────────────── */
+  .measure {
+    max-width: 960px;
+    margin: 0 auto 48px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.75s forwards;
+  }
+
+  .measure-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .measure-header h3 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--text);
+  }
+
+  .measure-header span {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+  }
+
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3px;
+  }
+
+  @media (max-width: 600px) {
+    .metrics-grid { grid-template-columns: 1fr; }
+  }
+
+  .metric {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 18px 20px;
+  }
+
+  .metric-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .metric-baseline {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+    line-height: 1.4;
+  }
+
+  .metric-target {
+    font-size: 12px;
+    color: var(--augment);
+    line-height: 1.4;
+  }
+
+  .metric-arrow {
+    color: var(--text-dim);
+    margin: 2px 0 4px;
+    font-size: 10px;
+  }
+
+  /* ─── SKILLS SECTION ─────────────────────────────────── */
+  .skills {
+    max-width: 960px;
+    margin: 0 auto 48px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.85s forwards;
+  }
+
+  .skills-header {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+  }
+
+  .skills-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .skill-entry {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 20px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .skill-entry:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  @media (max-width: 640px) {
+    .skill-entry { grid-template-columns: 1fr; gap: 6px; }
+  }
+
+  .skill-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    padding-top: 1px;
+  }
+
+  .skill-why {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  /* ─── FOOTER NOTE ────────────────────────────────────── */
+  .footer-note {
+    max-width: 960px;
+    margin: 40px auto 0;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+    line-height: 1.6;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.95s forwards;
+  }
+
+  /* ─── ANIMATIONS ─────────────────────────────────────── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── RESPONSIVE ─────────────────────────────────────── */
+  @media (max-width: 640px) {
+    body { padding: 32px 16px 60px; }
+    .header { grid-template-columns: 1fr; }
+    .header-meta { text-align: left; }
+    .step-top { grid-template-columns: 36px 1fr auto; }
+    .value-bar { gap: 16px; }
+    .value-divider { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ──────────────────────────────────────────── -->
+<header class="header">
+  <div>
+    <div class="header-label">AI Opportunity Map</div>
+    <h1>Instructional Design Workflow<br><em>What's visible. What can change.</em></h1>
+  </div>
+  <div class="header-meta">
+    <div class="team">Learning &amp; Talent Dev</div>
+    <div class="date">HubSpot · 2025</div>
+  </div>
+</header>
+
+<!-- ── VALUE CONTEXT BAR ───────────────────────────────── -->
+<div class="value-bar">
+  <div class="value-item">
+    <span class="value-label">Consequence of failure</span>
+    <span class="value-value high">High</span>
+  </div>
+  <div class="value-divider"></div>
+  <div class="value-item">
+    <span class="value-label">Scale of impact</span>
+    <span class="value-value">~2,000 employees across all functions</span>
+  </div>
+  <div class="value-divider"></div>
+  <div class="value-item">
+    <span class="value-label">Aggregate time cost</span>
+    <span class="value-value">Est. 60–80% of project hours in development &amp; review</span>
+  </div>
+  <div class="value-divider"></div>
+  <div class="value-item">
+    <span class="value-label">Strategic relevance</span>
+    <span class="value-value">Core to onboarding, enablement, and upskilling velocity</span>
+  </div>
+</div>
+
+<!-- ── LEGEND ──────────────────────────────────────────── -->
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:var(--automate)"></div>Automate</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--augment)"></div>Augment</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--human)"></div>Keep human</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--stop)"></div>Stop / rethink</div>
+  <div class="legend-item" style="margin-left:auto; color: var(--text-dim)">↓ Expand each step to see the judgment layer</div>
+</div>
+
+<div class="section-label">Workflow Steps</div>
+
+<div class="workflow">
+
+  <!-- ── STEP 1: INTAKE ──────────────────────────────── -->
+  <div class="step">
+    <div class="step-top" onclick="toggleStep(this)">
+      <div class="step-number">01</div>
+      <div class="step-main">
+        <div class="step-name">Intake &amp; Request Triage</div>
+        <div class="step-desc">Receiving requests, clarifying scope, deciding whether to proceed</div>
+      </div>
+      <div class="step-tags">
+        <span class="tag tag-automate">Automate</span>
+        <span class="tag tag-augment">Augment</span>
+        <span class="tag tag-human">Keep human</span>
+      </div>
+      <div class="toggle"><span class="toggle-icon">+</span></div>
+    </div>
+    <div class="judgment-layer">
+      <div class="judgment-label">Hidden judgment layer</div>
+      <div class="judgment-grid">
+        <div class="judgment-col">
+          <h4>What actually happens here</h4>
+          <ul>
+            <li>Deciding whether training is even the right solution</li>
+            <li>Reading the real need behind the stated request</li>
+            <li>Assessing stakeholder credibility and urgency</li>
+            <li>Identifying missing context before agreeing to scope</li>
+          </ul>
+        </div>
+        <div class="judgment-col">
+          <h4>Where it breaks down</h4>
+          <ul>
+            <li>Requests accepted without enough diagnostic questions</li>
+            <li>No consistent intake format — information scattered</li>
+            <li>Scope creep begins here because agreements are verbal</li>
+          </ul>
+        </div>
+      </div>
+      <div class="opportunity-row">
+        <div class="opp-block automate">
+          <div class="opp-label">Automate</div>
+          <div class="opp-text">Intake form routing, request logging, confirmation messages, basic info gathering</div>
+          <span class="risk-toggle" onclick="toggleRisk(this)"><span class="risk-icon">⚠</span> Watch for</span>
+          <div class="risk-content">Over-automating intake can create a false sense that requests are understood before a human has reviewed them — automated logging isn't the same as scoped agreement.</div>
+        </div>
+        <div class="opp-block augment">
+          <div class="opp-label">Augment</div>
+          <div class="opp-text">AI surfaces diagnostic questions based on request type; flags when training may not be the right solution</div>
+        </div>
+        <div class="opp-block human">
+          <div class="opp-label">Keep human</div>
+          <div class="opp-text">The actual decision to proceed, push back, or redirect — requires relationship context and judgment</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── STEP 2: DISCOVERY ────────────────────────────── -->
+  <div class="step">
+    <div class="step-top" onclick="toggleStep(this)">
+      <div class="step-number">02</div>
+      <div class="step-main">
+        <div class="step-name">Discovery &amp; Needs Analysis</div>
+        <div class="step-desc">Interviewing stakeholders, reviewing existing content, diagnosing the real gap</div>
+      </div>
+      <div class="step-tags">
+        <span class="tag tag-augment">Augment</span>
+        <span class="tag tag-human">Keep human</span>
+      </div>
+      <div class="toggle"><span class="toggle-icon">+</span></div>
+    </div>
+    <div class="judgment-layer">
+      <div class="judgment-label">Hidden judgment layer</div>
+      <div class="judgment-grid">
+        <div class="judgment-col">
+          <h4>What actually happens here</h4>
+          <ul>
+            <li>Knowing which questions to ask — and which to save for later</li>
+            <li>Distinguishing symptoms from root causes</li>
+            <li>Sensing when a stakeholder doesn't know what they need</li>
+            <li>Deciding how much discovery is enough</li>
+          </ul>
+        </div>
+        <div class="judgment-col">
+          <h4>Where it breaks down</h4>
+          <ul>
+            <li>Discovery depth varies by designer, not by project need</li>
+            <li>Interview notes not captured in reusable format</li>
+            <li>Findings rarely surface back to team for pattern recognition</li>
+          </ul>
+        </div>
+      </div>
+      <div class="opportunity-row">
+        <div class="opp-block automate">
+          <div class="opp-label">Automate</div>
+          <div class="opp-text">Transcript generation, note synthesis, existing content audit across known repositories</div>
+        </div>
+        <div class="opp-block augment">
+          <div class="opp-label">Augment</div>
+          <div class="opp-text">AI generates discovery question sets per project type; synthesizes interview themes; flags gaps in information before design begins</div>
+          <span class="risk-toggle" onclick="toggleRisk(this)"><span class="risk-icon">⚠</span> Watch for</span>
+          <div class="risk-content">AI-synthesized themes can surface confident-sounding patterns from thin interview data. If discovery inputs are weak, the synthesis will be wrong in ways that aren't obvious.</div>
+        </div>
+        <div class="opp-block human">
+          <div class="opp-label">Keep human</div>
+          <div class="opp-text">Reading the room; building stakeholder trust; making the call on root cause vs. symptom</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── STEP 3: DESIGN ───────────────────────────────── -->
+  <div class="step">
+    <div class="step-top" onclick="toggleStep(this)">
+      <div class="step-number">03</div>
+      <div class="step-main">
+        <div class="step-name">Instructional Design</div>
+        <div class="step-desc">Defining learning objectives, structure, modality, and assessment approach</div>
+      </div>
+      <div class="step-tags">
+        <span class="tag tag-augment">Augment</span>
+        <span class="tag tag-human">Keep human</span>
+        <span class="badge-conditional">Conditional</span>
+      </div>
+      <div class="toggle"><span class="toggle-icon">+</span></div>
+    </div>
+    <div class="judgment-layer">
+      <div class="judgment-label">Hidden judgment layer</div>
+      <div class="judgment-grid">
+        <div class="judgment-col">
+          <h4>What actually happens here</h4>
+          <ul>
+            <li>Choosing modality based on audience, not just preference</li>
+            <li>Balancing what stakeholders want with what learners need</li>
+            <li>Deciding what to leave out — often more important than what to include</li>
+            <li>Applying taste: what does "good" actually look like for this learner?</li>
+          </ul>
+        </div>
+        <div class="judgment-col">
+          <h4>Where it breaks down</h4>
+          <ul>
+            <li>Design rationale rarely documented — lives only in the designer's head</li>
+            <li>Inconsistent quality standards across team members</li>
+            <li>Modality decisions often driven by tool familiarity, not learner need</li>
+          </ul>
+        </div>
+      </div>
+      <div class="conditional-note">
+        <strong>Conditional:</strong> Automate objective generation if documented design criteria exist; Keep Human on modality and structure decisions until criteria are defined and validated.
+      </div>
+      <div class="opportunity-row">
+        <div class="opp-block automate">
+          <div class="opp-label">Automate</div>
+          <div class="opp-text">Learning objective generation from discovery notes; template scaffolding; modality recommendation based on documented criteria</div>
+        </div>
+        <div class="opp-block augment">
+          <div class="opp-label">Augment</div>
+          <div class="opp-text">AI applies team's documented design principles as a live check; flags when design decisions contradict stated learner needs</div>
+          <span class="risk-toggle" onclick="toggleRisk(this)"><span class="risk-icon">⚠</span> Watch for</span>
+          <div class="risk-content">If design principles aren't yet documented, AI checks will default to generic instructional design conventions — which may conflict with this team's actual standards.</div>
+        </div>
+        <div class="opp-block human">
+          <div class="opp-label">Keep human</div>
+          <div class="opp-text">The taste layer: final calls on structure, emphasis, and what "good" looks like for this specific context</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── STEP 4: DEVELOPMENT ─────────────────────────── -->
+  <div class="step">
+    <div class="step-top" onclick="toggleStep(this)">
+      <div class="step-number">04</div>
+      <div class="step-main">
+        <div class="step-name">Content Development</div>
+        <div class="step-desc">Writing, building, producing the actual learning asset</div>
+      </div>
+      <div class="step-tags">
+        <span class="tag tag-automate">Automate</span>
+        <span class="tag tag-augment">Augment</span>
+        <span class="tag tag-stop">Stop / rethink</span>
+      </div>
+      <div class="toggle"><span class="toggle-icon">+</span></div>
+    </div>
+    <div class="judgment-layer">
+      <div class="judgment-label">Hidden judgment layer</div>
+      <div class="judgment-grid">
+        <div class="judgment-col">
+          <h4>What actually happens here</h4>
+          <ul>
+            <li>Translating design decisions into actual content — where time is heaviest</li>
+            <li>Making real-time quality calls while drafting</li>
+            <li>Knowing when a draft is "good enough" vs. worth another pass</li>
+            <li>Managing the gap between first draft and stakeholder expectations</li>
+          </ul>
+        </div>
+        <div class="judgment-col">
+          <h4>Where it breaks down</h4>
+          <ul>
+            <li>Most time spent here — and it's the most automatable stage</li>
+            <li>Content rebuilt from scratch when similar assets already exist</li>
+            <li>Inconsistent voice/tone across team — no shared style baseline</li>
+          </ul>
+        </div>
+      </div>
+      <div class="opportunity-row">
+        <div class="opp-block automate">
+          <div class="opp-label">Automate</div>
+          <div class="opp-text">First-draft generation from design doc; repurposing existing content; formatting, templating, basic visual production tasks</div>
+          <span class="risk-toggle" onclick="toggleRisk(this)"><span class="risk-icon">⚠</span> Watch for</span>
+          <div class="risk-content">Draft quality is only as good as the design doc input. Automating from a weak brief produces confident-sounding content that requires heavy rework — sometimes more than writing from scratch.</div>
+        </div>
+        <div class="opp-block augment">
+          <div class="opp-label">Augment</div>
+          <div class="opp-text">AI applies documented voice/quality standards; flags content that drifts from learning objectives; suggests existing assets to reuse</div>
+        </div>
+        <div class="opp-block stop">
+          <div class="opp-label">Stop / Rethink</div>
+          <div class="opp-text">Building bespoke content when templated or reusable assets would serve the learner equally well — this is a default habit worth questioning</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── STEP 5: REVIEW ──────────────────────────────── -->
+  <div class="step">
+    <div class="step-top" onclick="toggleStep(this)">
+      <div class="step-number">05</div>
+      <div class="step-main">
+        <div class="step-name">Stakeholder Review &amp; Revision</div>
+        <div class="step-desc">Gathering feedback, managing revisions, getting sign-off</div>
+      </div>
+      <div class="step-tags">
+        <span class="tag tag-automate">Automate</span>
+        <span class="tag tag-augment">Augment</span>
+        <span class="tag tag-stop">Stop / rethink</span>
+        <span class="badge-provisional">Provisional</span>
+      </div>
+      <div class="toggle"><span class="toggle-icon">+</span></div>
+    </div>
+    <div class="judgment-layer">
+      <div class="judgment-label">Hidden judgment layer</div>
+      <div class="judgment-grid">
+        <div class="judgment-col">
+          <h4>What actually happens here</h4>
+          <ul>
+            <li>Deciding which feedback to incorporate vs. push back on</li>
+            <li>Managing stakeholders who want to reopen design decisions</li>
+            <li>Knowing when revision cycles are producing diminishing returns</li>
+            <li>Protecting learner needs when stakeholder preferences conflict</li>
+          </ul>
+        </div>
+        <div class="judgment-col">
+          <h4>Where it breaks down</h4>
+          <ul>
+            <li>Revision rounds are often open-ended — no agreed stopping criteria</li>
+            <li>Feedback arrives in multiple formats, untracked</li>
+            <li>Same comments surface repeatedly — not caught earlier in process</li>
+          </ul>
+        </div>
+      </div>
+      <p style="font-size:11px; color:var(--text-dim); font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.08em; text-transform:uppercase; margin-top:14px;">This classification is provisional — see gap report for what's missing.</p>
+      <div class="opportunity-row">
+        <div class="opp-block automate">
+          <div class="opp-label">Automate</div>
+          <div class="opp-text">Feedback consolidation across reviewers; change tracking; version management</div>
+        </div>
+        <div class="opp-block augment">
+          <div class="opp-label">Augment</div>
+          <div class="opp-text">AI flags feedback that contradicts agreed objectives; catches common issues earlier in development to reduce revision volume</div>
+        </div>
+        <div class="opp-block stop">
+          <div class="opp-label">Stop / Rethink</div>
+          <div class="opp-text">Unbounded revision cycles with no agreed criteria — this process pattern should be redesigned before optimizing within it</div>
+          <span class="risk-toggle" onclick="toggleRisk(this)"><span class="risk-icon">⚠</span> Watch for</span>
+          <div class="risk-content">Automating feedback consolidation inside a broken review process makes the broken process easier to sustain — which is the opposite of the intended outcome.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── STEP 6: LAUNCH & MEASURE ─────────────────────── -->
+  <div class="step">
+    <div class="step-top" onclick="toggleStep(this)">
+      <div class="step-number">06</div>
+      <div class="step-main">
+        <div class="step-name">Launch &amp; Measurement</div>
+        <div class="step-desc">Deploying the asset, tracking completion and impact, iterating</div>
+      </div>
+      <div class="step-tags">
+        <span class="tag tag-automate">Automate</span>
+        <span class="tag tag-augment">Augment</span>
+        <span class="tag tag-stop">Stop / rethink</span>
+      </div>
+      <div class="toggle"><span class="toggle-icon">+</span></div>
+    </div>
+    <div class="judgment-layer">
+      <div class="judgment-label">Hidden judgment layer</div>
+      <div class="judgment-grid">
+        <div class="judgment-col">
+          <h4>What actually happens here</h4>
+          <ul>
+            <li>Deciding what to measure — and what "good" actually looks like post-launch</li>
+            <li>Connecting learning activity to business outcomes (often not done)</li>
+            <li>Knowing when to iterate vs. retire an asset</li>
+          </ul>
+        </div>
+        <div class="judgment-col">
+          <h4>Where it breaks down</h4>
+          <ul>
+            <li>Measurement often defaults to completion rates — not impact</li>
+            <li>Baseline rarely documented, making "improvement" hard to prove</li>
+            <li>Assets launched and never revisited</li>
+          </ul>
+        </div>
+      </div>
+      <div class="opportunity-row">
+        <div class="opp-block automate">
+          <div class="opp-label">Automate</div>
+          <div class="opp-text">Completion tracking, data collection, scheduled performance reports against baseline</div>
+        </div>
+        <div class="opp-block augment">
+          <div class="opp-label">Augment</div>
+          <div class="opp-text">AI surfaces patterns in engagement and feedback; flags assets underperforming against stated objectives</div>
+        </div>
+        <div class="opp-block stop">
+          <div class="opp-label">Stop / Rethink</div>
+          <div class="opp-text">Measuring completion as a proxy for impact — this metric persists by institutional habit, not because it answers whether learning happened</div>
+          <span class="risk-toggle" onclick="toggleRisk(this)"><span class="risk-icon">⚠</span> Watch for</span>
+          <div class="risk-content">Automating completion-rate reporting makes it even easier to report on the wrong thing with high confidence. Define outcome metrics first.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── SUMMARY ──────────────────────────────────────────── -->
+<div class="section-label">Summary</div>
+<div class="summary">
+  <div class="summary-grid">
+    <div class="summary-card automate">
+      <div class="card-label">Automate</div>
+      <div class="card-count">8</div>
+      <div class="card-desc">Discrete tasks fully automatable today with minimal risk</div>
+    </div>
+    <div class="summary-card augment">
+      <div class="card-label">Augment</div>
+      <div class="card-count">10</div>
+      <div class="card-desc">High-value tasks where AI amplifies human judgment without replacing it</div>
+    </div>
+    <div class="summary-card human">
+      <div class="card-label">Keep Human</div>
+      <div class="card-count">7</div>
+      <div class="card-desc">Judgment, taste, relationship, and context — not safely delegated</div>
+    </div>
+    <div class="summary-card stop">
+      <div class="card-label">Stop / Rethink</div>
+      <div class="card-count">3</div>
+      <div class="card-desc">Practices that persist by habit — worth questioning before rebuilding</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MEASUREMENT BASELINE ─────────────────────────────── -->
+<div class="section-label">Measurement Baseline</div>
+<div class="measure">
+  <div class="measure-header">
+    <h3>How we'll know it worked</h3>
+    <span>Baseline → target</span>
+  </div>
+  <div class="metrics-grid">
+    <div class="metric">
+      <div class="metric-name">Time: intake → first draft</div>
+      <div class="metric-baseline">Baseline: ~3–5 days (est.)</div>
+      <div class="metric-arrow">→</div>
+      <div class="metric-target">Target: 1–2 days with augmented workflow</div>
+    </div>
+    <div class="metric">
+      <div class="metric-name">Revision rounds per project</div>
+      <div class="metric-baseline">Baseline: avg. rounds not yet tracked</div>
+      <div class="metric-arrow">→</div>
+      <div class="metric-target">Target: reduce by catching misalignment earlier</div>
+    </div>
+    <div class="metric">
+      <div class="metric-name">Judgment documented</div>
+      <div class="metric-baseline">Baseline: 0 — lives in heads only</div>
+      <div class="metric-arrow">→</div>
+      <div class="metric-target">Target: principles captured per workflow stage, reusable</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SKILLS TO ACT ON THIS MAP ─────────────────────────── -->
+<div class="section-label">Skills to Act on This Map</div>
+<div class="skills">
+  <div class="skills-header">Capabilities needed to execute</div>
+  <div class="skills-list">
+    <div class="skill-entry">
+      <div class="skill-name">Prompt design for content drafting</div>
+      <div class="skill-why">Step 4 has the highest automation surface on this map. Getting useful first drafts requires practitioners who can write structured briefs that translate design docs into generation-ready inputs — not just "write me a module."</div>
+    </div>
+    <div class="skill-entry">
+      <div class="skill-name">Judgment documentation</div>
+      <div class="skill-why">Steps 3 and 5 are conditional or provisional precisely because design criteria and review standards don't exist in written form. The skill needed here isn't AI fluency — it's making tacit standards explicit so AI can apply them.</div>
+    </div>
+    <div class="skill-entry">
+      <div class="skill-name">AI-assisted synthesis and analysis</div>
+      <div class="skill-why">Steps 2 and 6 require practitioners to evaluate AI-generated summaries critically — recognizing when interview synthesis is pattern-matching on thin data, or when performance reports are measuring the wrong thing.</div>
+    </div>
+    <div class="skill-entry">
+      <div class="skill-name">Process redesign before automation</div>
+      <div class="skill-why">Three steps carry Stop/Rethink classifications. Acting on this map requires willingness to fix the underlying process before layering in tools — otherwise automation makes broken workflows faster to repeat.</div>
+    </div>
+    <div class="skill-entry">
+      <div class="skill-name">Workflow piloting and iteration</div>
+      <div class="skill-why">Most augment opportunities here depend on what gets documented and validated in a pilot. The skill is running structured experiments — testing one step at a time, capturing what actually changes, and updating the map based on evidence.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── FOOTER NOTE ──────────────────────────────────────── -->
+<div class="footer-note">
+  This map is a starting point, not a final answer. The baselines are estimates — capturing real data is the first step.<br>
+  The "stop / rethink" column is intentionally uncomfortable. That's the point.
+</div>
+
+<script>
+  function toggleStep(topEl) {
+    const step = topEl.closest('.step');
+    const layer = step.querySelector('.judgment-layer');
+    const toggle = topEl.querySelector('.toggle');
+    const isOpen = layer.classList.contains('open');
+    layer.classList.toggle('open', !isOpen);
+    toggle.classList.toggle('open', !isOpen);
+  }
+
+  function toggleRisk(el) {
+    event.stopPropagation();
+    const content = el.nextElementSibling;
+    const isOpen = content.classList.contains('open');
+    content.classList.toggle('open', !isOpen);
+    el.innerHTML = isOpen
+      ? '<span class="risk-icon">⚠</span> Watch for'
+      : '<span class="risk-icon">⚠</span> Watch for ↑';
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Opportunity Map — Content Marketing Production</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0e0f11;
+    --surface: #15171a;
+    --surface2: #1c1f23;
+    --border: #2a2d32;
+    --border-light: #323640;
+    --text: #e8e9eb;
+    --text-muted: #7a7f8a;
+    --text-dim: #4a4f5a;
+
+    --automate: #4ade80;
+    --automate-bg: #0d2b1a;
+    --automate-border: #1a4a2e;
+
+    --augment: #60a5fa;
+    --augment-bg: #0d1e35;
+    --augment-border: #1a3555;
+
+    --human: #f59e0b;
+    --human-bg: #2a1f08;
+    --human-border: #4a3510;
+
+    --stop: #f87171;
+    --stop-bg: #2a0f0f;
+    --stop-border: #4a1a1a;
+
+    --accent: #a78bfa;
+    --warning: #f97316;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    padding: 48px 32px 80px;
+  }
+
+  /* ─── HEADER ─────────────────────────────────────────── */
+  .header {
+    max-width: 960px;
+    margin: 0 auto 0;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 24px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards;
+  }
+
+  .header-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .header h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 32px;
+    font-weight: 400;
+    line-height: 1.15;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+
+  .header h1 em {
+    font-style: italic;
+    color: var(--text-muted);
+  }
+
+  .header-meta {
+    text-align: right;
+  }
+
+  .header-meta .team {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .header-meta .date {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+  }
+
+  /* ─── VALUE CONTEXT BAR ──────────────────────────────── */
+  .value-bar {
+    max-width: 960px;
+    margin: 0 auto 48px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px;
+    align-items: center;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.05s forwards;
+  }
+
+  .value-item {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  .value-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .value-value {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+  }
+
+  .value-value.high {
+    color: var(--stop);
+  }
+
+  .value-divider {
+    width: 1px;
+    height: 14px;
+    background: var(--border);
+    flex-shrink: 0;
+  }
+
+  /* ─── LEGEND ─────────────────────────────────────────── */
+  .legend {
+    max-width: 960px;
+    margin: 0 auto 48px;
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.1s forwards;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ─── SECTION LABEL ──────────────────────────────────── */
+  .section-label {
+    max-width: 960px;
+    margin: 0 auto 20px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+
+  /* ─── WORKFLOW STEPS ─────────────────────────────────── */
+  .workflow {
+    max-width: 960px;
+    margin: 0 auto 56px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .step {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    opacity: 0;
+    animation: fadeUp 0.5s ease forwards;
+  }
+
+  .step:nth-child(1) { animation-delay: 0.15s; }
+  .step:nth-child(2) { animation-delay: 0.22s; }
+  .step:nth-child(3) { animation-delay: 0.29s; }
+  .step:nth-child(4) { animation-delay: 0.36s; }
+  .step:nth-child(5) { animation-delay: 0.43s; }
+  .step:nth-child(6) { animation-delay: 0.50s; }
+
+  .step-top {
+    display: grid;
+    grid-template-columns: 40px 1fr auto 52px;
+    align-items: stretch;
+    background: var(--surface);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .step-top:hover {
+    background: var(--surface2);
+  }
+
+  .step-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    border-right: 1px solid var(--border);
+    padding: 16px 0;
+  }
+
+  .step-main {
+    padding: 16px 20px;
+  }
+
+  .step-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 4px;
+    letter-spacing: -0.01em;
+  }
+
+  .step-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  .step-tags {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 16px 12px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  /* ─── TAGS ───────────────────────────────────────────── */
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+
+  .tag-automate { background: var(--automate-bg); color: var(--automate); border: 1px solid var(--automate-border); }
+  .tag-augment  { background: var(--augment-bg);  color: var(--augment);  border: 1px solid var(--augment-border); }
+  .tag-human    { background: var(--human-bg);    color: var(--human);    border: 1px solid var(--human-border); }
+  .tag-stop     { background: var(--stop-bg);     color: var(--stop);     border: 1px solid var(--stop-border); }
+
+  .badge-conditional {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 3px;
+    white-space: nowrap;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    background: transparent;
+  }
+
+  /* ─── EXPAND TOGGLE ──────────────────────────────────── */
+  .toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-left: 1px solid var(--border);
+    cursor: pointer;
+    color: var(--text-dim);
+    font-size: 14px;
+    transition: color 0.15s;
+    user-select: none;
+  }
+
+  .toggle:hover { color: var(--text-muted); }
+
+  .toggle-icon {
+    transition: transform 0.2s;
+    line-height: 1;
+  }
+
+  .toggle.open .toggle-icon { transform: rotate(45deg); }
+
+  /* ─── JUDGMENT LAYER ─────────────────────────────────── */
+  .judgment-layer {
+    display: none;
+    background: #111316;
+    border-top: 1px solid var(--border);
+    padding: 20px 20px 20px 60px;
+  }
+
+  .judgment-layer.open {
+    display: block;
+  }
+
+  .judgment-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    opacity: 0.7;
+  }
+
+  .judgment-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .judgment-col h4 {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+
+  .judgment-col ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .judgment-col ul li {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    padding-left: 12px;
+    position: relative;
+  }
+
+  .judgment-col ul li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--text-dim);
+    font-size: 10px;
+  }
+
+  /* Conditional note */
+  .conditional-note {
+    margin-top: 14px;
+    padding: 10px 14px;
+    border-left: 2px solid var(--accent);
+    background: rgba(167, 139, 250, 0.05);
+    border-radius: 0 3px 3px 0;
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.55;
+  }
+
+  .conditional-note strong {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  /* ─── OPPORTUNITY ROW ────────────────────────────────── */
+  .opportunity-row {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .opp-block {
+    flex: 1 1 200px;
+    padding: 12px 14px;
+    border-radius: 4px;
+    border: 1px solid;
+  }
+
+  .opp-block.automate { background: var(--automate-bg); border-color: var(--automate-border); }
+  .opp-block.augment  { background: var(--augment-bg);  border-color: var(--augment-border); }
+  .opp-block.human    { background: var(--human-bg);    border-color: var(--human-border); }
+  .opp-block.stop     { background: var(--stop-bg);     border-color: var(--stop-border); }
+
+  .opp-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .opp-block.automate .opp-label { color: var(--automate); }
+  .opp-block.augment  .opp-label { color: var(--augment); }
+  .opp-block.human    .opp-label { color: var(--human); }
+  .opp-block.stop     .opp-label { color: var(--stop); }
+
+  .opp-text {
+    font-size: 11px;
+    line-height: 1.55;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+
+  /* ─── AI STATUS INDICATORS ───────────────────────────── */
+  .ai-status {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 3px;
+    margin-top: 8px;
+    display: inline-block;
+  }
+
+  .status-working {
+    color: var(--automate);
+    background: var(--automate-bg);
+    border: 1px solid var(--automate-border);
+  }
+
+  .status-guardrails {
+    color: var(--warning);
+    background: rgba(249, 115, 22, 0.08);
+    border: 1px dashed var(--warning);
+  }
+
+  .status-reconsider {
+    color: var(--stop);
+    background: var(--stop-bg);
+    border: 1px solid var(--stop-border);
+  }
+
+  /* ─── RISK CALLOUT ───────────────────────────────────── */
+  .risk-toggle {
+    display: block;
+    margin-top: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    cursor: pointer;
+    padding: 6px 0 2px;
+    border-top: 1px solid rgba(255,255,255,0.04);
+    user-select: none;
+    transition: color 0.15s;
+  }
+
+  .risk-toggle .risk-icon {
+    color: var(--warning);
+  }
+
+  .risk-toggle:hover {
+    color: var(--text-muted);
+  }
+
+  .risk-content {
+    display: none;
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.55;
+    padding: 8px 0 4px 12px;
+    border-left: 1px solid var(--border);
+    margin-top: 4px;
+  }
+
+  .risk-content.open {
+    display: block;
+  }
+
+  /* ─── SUMMARY ────────────────────────────────────────── */
+  .summary {
+    max-width: 960px;
+    margin: 0 auto 56px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.6s forwards;
+  }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 3px;
+  }
+
+  .summary-card {
+    padding: 20px;
+    border-radius: 4px;
+    border: 1px solid;
+  }
+
+  .summary-card.automate { background: var(--automate-bg); border-color: var(--automate-border); }
+  .summary-card.augment  { background: var(--augment-bg);  border-color: var(--augment-border); }
+  .summary-card.human    { background: var(--human-bg);    border-color: var(--human-border); }
+  .summary-card.stop     { background: var(--stop-bg);     border-color: var(--stop-border); }
+
+  .summary-card .card-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .summary-card.automate .card-label { color: var(--automate); }
+  .summary-card.augment  .card-label { color: var(--augment); }
+  .summary-card.human    .card-label { color: var(--human); }
+  .summary-card.stop     .card-label { color: var(--stop); }
+
+  .summary-card .card-count {
+    font-family: 'Instrument Serif', serif;
+    font-size: 36px;
+    line-height: 1;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+
+  .summary-card .card-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  /* ─── MEASUREMENT BASELINE ───────────────────────────── */
+  .measure {
+    max-width: 960px;
+    margin: 0 auto 48px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.75s forwards;
+  }
+
+  .measure-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .measure-header h3 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--text);
+  }
+
+  .measure-header span {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+  }
+
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3px;
+  }
+
+  .metric {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 18px 20px;
+  }
+
+  .metric-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .metric-baseline {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+    line-height: 1.4;
+  }
+
+  .metric-target {
+    font-size: 12px;
+    color: var(--augment);
+    line-height: 1.4;
+  }
+
+  .metric-arrow {
+    color: var(--text-dim);
+    margin: 2px 0 4px;
+    font-size: 10px;
+  }
+
+  /* ─── SKILLS SECTION ─────────────────────────────────── */
+  .skills {
+    max-width: 960px;
+    margin: 0 auto 48px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.85s forwards;
+  }
+
+  .skills-header {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+  }
+
+  .skills-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .skill-entry {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 20px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .skill-entry:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .skill-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    padding-top: 1px;
+  }
+
+  .skill-why {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  /* ─── FOOTER NOTE ────────────────────────────────────── */
+  .footer-note {
+    max-width: 960px;
+    margin: 40px auto 0;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+    line-height: 1.6;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.95s forwards;
+  }
+
+  /* ─── NEXT AUDITS ────────────────────────────────────── */
+  .next-audits {
+    max-width: 960px;
+    margin: 32px auto 0;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    opacity: 0;
+    animation: fadeUp 0.6s ease 1.05s forwards;
+  }
+
+  .next-audits-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+  }
+
+  .audit-rec {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.55;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .audit-rec:last-child {
+    border-bottom: none;
+  }
+
+  .audit-rec strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  /* ─── ANIMATIONS ─────────────────────────────────────── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── RESPONSIVE ─────────────────────────────────────── */
+  @media (max-width: 640px) {
+    body { padding: 32px 16px 60px; }
+    .header { grid-template-columns: 1fr; }
+    .header-meta { text-align: left; }
+    .step-top { grid-template-columns: 36px 1fr auto 40px; }
+    .judgment-grid { grid-template-columns: 1fr; }
+    .opportunity-row { flex-direction: column; }
+    .skill-entry { grid-template-columns: 1fr; gap: 6px; }
+    .summary-grid { grid-template-columns: repeat(2, 1fr); }
+    .metrics-grid { grid-template-columns: 1fr; }
+    .value-bar { gap: 16px; }
+    .value-divider { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ──────────────────────────────────────────── -->
+<header class="header">
+  <div>
+    <div class="header-label">AI Opportunity Map</div>
+    <h1>Content Marketing Production<br><em>What's visible. What can change.</em></h1>
+  </div>
+  <div class="header-meta">
+    <div class="team">Content Marketing — 4-person team</div>
+    <div class="date">June 2026</div>
+  </div>
+</header>
+
+<!-- ── VALUE CONTEXT BAR ───────────────────────────────── -->
+<div class="value-bar">
+  <div class="value-item">
+    <span class="value-label">Consequence of failure</span>
+    <span class="value-value high">High</span>
+  </div>
+  <div class="value-divider"></div>
+  <div class="value-item">
+    <span class="value-label">Scale of impact</span>
+    <span class="value-value">40K monthly readers · 12K newsletter · 25K LinkedIn · 20 sales reps</span>
+  </div>
+  <div class="value-divider"></div>
+  <div class="value-item">
+    <span class="value-label">Team time cost</span>
+    <span class="value-value">120–140 hrs / week across 4 people</span>
+  </div>
+  <div class="value-divider"></div>
+  <div class="value-item">
+    <span class="value-label">Strategic relevance</span>
+    <span class="value-value">Board-reported metrics · CEO reads the newsletter · VP of Marketing quarterly goals</span>
+  </div>
+</div>
+
+<!-- ── LEGEND ──────────────────────────────────────────── -->
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:var(--automate)"></div>Automate</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--augment)"></div>Augment</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--human)"></div>Keep human</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--stop)"></div>Stop / rethink</div>
+  <div class="legend-item" style="margin-left:auto; color: var(--text-dim)">↓ Expand each step to see the judgment layer</div>
+</div>
+
+<div class="section-label">Workflow Steps</div>
+
+<div class="workflow">
+
+  <!-- ── STEP 1: CONTENT PLANNING ─────────────────────── -->
+  <div class="step">
+    <div class="step-top" onclick="toggleStep(this)">
+      <div class="step-number">01</div>
+      <div class="step-main">
+        <div class="step-name">Content Planning &amp; Editorial Calendar</div>
+        <div class="step-desc">Monthly strategy cycle — balancing SEO opportunity, audience need, business priority, and team capacity</div>
+      </div>
+      <div class="step-tags">
+        <span class="tag tag-augment">Augment</span>
+        <span class="tag tag-human">Keep human</span>
+      </div>
+      <div class="toggle"><span class="toggle-icon">+</span></div>
+    </div>
+    <div class="judgment-layer">
+      <div class="judgment-label">Hidden judgment layer</div>
+      <div class="judgment-grid">
+        <div class="judgment-col">
+          <h4>What actually happens here</h4>
+          <ul>
+            <li>Balancing four competing signals: SEO opportunity, audience need, business priority, and writer energy — none of which is objectively more important</li>
+            <li>Applying a mental model of what keywords are being won, lost, or contested — and that model isn't written down anywhere</li>
+            <li>Matching topics to writers based on strengths: one writer does technical depth, the other does narrative and opinion</li>
+            <li>Planning capacity honestly — accounting for revision cycles and ad hoc requests that always materialize</li>
+          </ul>
+        </div>
+        <div class="judgment-col">
+          <h4>Where it breaks down</h4>
+          <ul>
+            <li>Mid-month priority changes (product launch moves, CEO sees a competitor post) blow up the calendar after it's already been distributed</li>
+            <li>Vague briefs emerge from rushed planning — topics that sound good in a meeting but are impossible to write well</li>
+            <li>Over-planning: scheduling more than the team can produce at quality, leading to Friday fire drills</li>
+            <li>Input aggregation (keyword data, sales requests, campaign pipeline, performance review) consumes half a day before any thinking happens</li>
+          </ul>
+        </div>
+      </div>
+      <div class="opportunity-row">
+        <div class="opp-block augment">
+          <div class="opp-label">Augment</div>
+          <div class="opp-text">AI aggregates the inputs before planning: pulls keyword data summaries, surfaces what's trending in the sales request queue, flags content that's underperforming and due for a refresh. The goal is to compress the half-day of tedious input-gathering into something the manager can review in 30 minutes and think from — not to replace the strategic thinking.</div>
+          <div class="ai-status status-guardrails">In use — needs guardrails</div>
+          <span class="risk-toggle" onclick="toggleRisk(this)"><span class="risk-icon">⚠</span> Watch for</span>
+          <div class="risk-content">Current usage (ChatGPT for topic brainstorming) is the lowest-value application of AI in this step — it helps with the part that's already interesting, not the part that's tedious. The real aggregation work — pulling keyword data, reviewing pipeline, synthesizing performance — is still fully manual. The guardrail needed here isn't about quality so much as redirect: the tool is being pointed at the wrong problem.</div>
+        </div>
+        <div class="opp-block human">
+          <div class="opp-label">Keep Human</div>
+          <div class="opp-text">The strategic call itself: deciding what to prioritize given four competing signals, assigning writers based on topic-fit and capacity, setting realistic volume targets. This requires holding a mental model of keyword strategy, competitive positioning, and team dynamics that isn't captured in any document. Until that model is documented, no AI tool can apply it.</div>
+          <span class="risk-toggle" onclick="toggleRisk(this)"><span class="risk-icon">⚠</span> Watch for</span>
+          <div class="risk-content">Key-person dependency: the entire strategic model for content planning lives in one person's head. This is correctly classified Keep Human — but the judgment is fragile. If the content marketing manager is unavailable, planning stops. The value of this step isn't just the output; it's the expertise behind it, and that expertise isn't transferable as long as it's undocumented.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── STEP 2: RESEARCH & BRIEF ──────────────────────── -->
+  <div class="step">
+    <div class="step-top" onclick="toggleStep(this)">
+      <div class="step-number">02</div>
+      <div class="step-main">
+        <div class="step-name">Research &amp; Brief Creation</div>
+        <div class="step-desc">SERP review, competitive gap identification, and brief writing for each assigned piece</div>
+      </div>
+      <div class="step-tags">
+        <span class="tag tag-automate">Automate</span>
+        <span class="tag tag-augment">Augment</span>
+        <span class="tag tag-human">Keep human</span>
+      </div>
+      <div class="toggle"><span class="toggle-icon">+</span></div>
+    </div>
+    <div class="judgment-layer">
+      <div class="judgment-label">Hidden judgment layer</div>
+      <div class="judgment-grid">
+        <div class="judgment-col">
+          <h4>What actually happens here</h4>
+          <ul>
+            <li>Manual SERP review of top 5–10 results per keyword: what angle they take, what they miss, where a differentiated piece could rank</li>
+            <li>Deciding what "different or better" actually means for this topic and audience — not just longer or more comprehensive</li>
+            <li>Writing a brief that gives the writer structure without removing their room to think</li>
+            <li>Surfacing internal links and existing content the piece should reference — this requires knowing the content library well</li>
+          </ul>
+        </div>
+        <div class="judgment-col">
+          <h4>Where it breaks down</h4>
+          <ul>
+            <li>Briefs without competitive context produce content that's a rewrite of what already ranks — same angle, same depth, no reason to click</li>
+            <li>Briefs go stale: a 2-week gap between brief and writing means the SERP or news cycle has shifted</li>
+            <li>One writer consistently does strong competitive research; the other tends to skip it — inconsistent brief quality across the team</li>
+            <li>Brief creation sits in the manager's queue for 2–3 days when editing is heavy — writers wait</li>
+          </ul>
+        </div>
+      </div>
+      <div class="opportunity-row">
+        <div class="opp-block automate">
+          <div class="opp-label">Automate</div>
+          <div class="opp-text">Keyword data pulling and SERP snapshot generation: what's ranking, what format (listicle, guide, comparison), estimated word count, domain authority of top results. This is the 30–45 minutes of mechanical reading that happens before any thinking occurs. A structured SERP briefing document, generated automatically per keyword, would give the manager or writer a research starting point instead of raw search results.</div>
+        </div>
+        <div class="opp-block augment">
+          <div class="opp-label">Augment</div>
+          <div class="opp-text">AI synthesizes SERP findings into a competitive gap analysis: what angles are overrepresented, what questions the ranking content doesn't answer, where there's an opening for a differentiated piece. It generates a brief scaffold — structure, key points to hit, internal links to consider — that the writer or manager rewrites rather than building from scratch.</div>
+          <div class="ai-status status-guardrails">In use — needs guardrails</div>
+          <span class="risk-toggle" onclick="toggleRisk(this)"><span class="risk-icon">⚠</span> Watch for</span>
+          <div class="risk-content">The current pattern — pasting competitor articles and asking for summaries — has a documented failure mode: AI invents gaps that aren't real. The fix isn't to stop using AI here, it's to change the prompt. Asking "what does this article fail to do for our specific audience (senior marketers and business leaders)?" produces fewer false positives than "what gaps does this article have?" The verification step needs to stay — the output from this sub-element is the foundation for the entire draft.</div>
+        </div>
+        <div class="opp-block human">
+          <div class="opp-label">Keep Human</div>
+          <div class="opp-text">The differentiation call: deciding which identified gap is actually worth writing about given what this audience cares about, what we've covered before, and what would produce a piece the sales team would share. This is taste and strategy, not synthesis. AI can surface the options; a human has to pick the one that's worth the writer's time.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── STEP 3: CONTENT DRAFTING ──────────────────────── -->
+  <div class="step">
+    <div class="step-top" onclick="toggleStep(this)">
+      <div class="step-number">03</div>
+      <div class="step-main">
+        <div class="step-name">Content Drafting</div>
+        <div class="step-desc">Writers produce first drafts of blog posts, newsletter features, and social series</div>
+      </div>
+      <div class="step-tags">
+        <span class="tag tag-augment">Augment</span>
+        <span class="tag tag-human">Keep human</span>
+      </div>
+      <div class="toggle"><span class="toggle-icon">+</span></div>
+    </div>
+    <div class="judgment-layer">
+      <div class="judgment-label">Hidden judgment layer</div>
+      <div class="judgment-grid">
+        <div class="judgment-col">
+          <h4>What actually happens here</h4>
+          <ul>
+            <li>Getting past the blank page — the first 30 minutes are hardest, even with a strong brief</li>
+            <li>Calibrating depth: how technical to go for an audience of senior marketers and business leaders who are smart but not specialists</li>
+            <li>Building an argument, not just covering a topic — the audience can get generic information anywhere</li>
+            <li>Applying brand voice: conversational, confident, specific, occasionally provocative — a standard the manager can hear but hasn't fully written down</li>
+          </ul>
+        </div>
+        <div class="judgment-col">
+          <h4>Where it breaks down</h4>
+          <ul>
+            <li>AI-assisted drafts that pass a skim test but fall apart on close read — the argument doesn't hold up, examples are generic, nothing a competitor couldn't publish</li>
+            <li>Writer B's voice has drifted since heavier AI use — output sounds more generic, less like him, requires more editing than it used to</li>
+            <li>No shared AI usage policy: one writer rewrites 70–80% of AI output, the other keeps 50–60% — inconsistent output quality follows</li>
+            <li>Drafts that technically follow the brief but miss the point — all information, no angle</li>
+          </ul>
+        </div>
+      </div>
+      <div class="opportunity-row">
+        <div class="opp-block augment">
+          <div class="opp-label">Augment</div>
+          <div class="opp-text">AI as blank-page breaker: generate a structural scaffold and rough first draft from the brief, giving the writer something to react to rather than originate from zero. The output is raw material, not a draft — the writer's job is to replace the generic with specific, inject the argument, and make it sound like themselves. Writer A's approach (70–80% rewrite) represents the correct use model for this step.</div>
+          <div class="ai-status status-guardrails">In use — needs guardrails</div>
+          <span class="risk-toggle" onclick="toggleRisk(this)"><span class="risk-icon">⚠</span> Watch for</span>
+          <div class="risk-content">Quality erosion is already in progress. The audit identifies it clearly for Writer B: voice drift, increased editing burden, and faster production of content that requires more fixing. The manager hasn't raised it yet. The longer this goes unaddressed, the harder it becomes to diagnose — because AI-flavored content degrades gradually, not suddenly, and each piece looks "close enough." The guardrail needed is a shared usage norm with a specific rewrite threshold, not a ban. Without it, the two writers will continue diverging in quality and the manager will spend more time editing, not less.</div>
+        </div>
+        <div class="opp-block human">
+          <div class="opp-label">Keep Human</div>
+          <div class="opp-text">Point of view, voice, specific examples, and the connective tissue that makes an argument hold up. These are exactly what AI drafts systematically strip out — they require the writer's actual experience and perspective, not synthesis of what's already been written. The manager's observation that AI output is "fluent and structured but says nothing" names the problem precisely. The human layer here is the product, not the polish.</div>
+          <span class="risk-toggle" onclick="toggleRisk(this)"><span class="risk-icon">⚠</span> Watch for</span>
+          <div class="risk-content">Deskilling in progress for heavier AI users. A writer who consistently defers the argument-building and voice work to AI + editing pass will gradually lose the ability to do it without that scaffold. This is distinct from Writer A's approach, which retains the cognitive work. The distinction matters: one writer is using AI as a starting point, the other is outsourcing the parts that make the content worth reading.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── STEP 4: EDITING & REVIEW ──────────────────────── -->
+  <div class="step">
+    <div class="step-top" onclick="toggleStep(this)">
+      <div class="step-number">04</div>
+      <div class="step-main">
+        <div class="step-name">Editing &amp; Review</div>
+        <div class="step-desc">Developmental editing, voice and quality check, SEO elements, writer feedback — all owned by one person</div>
+      </div>
+      <div class="step-tags">
+        <span class="tag tag-automate">Automate</span>
+        <span class="tag tag-augment">Augment</span>
+        <span class="tag tag-human">Keep human</span>
+      </div>
+      <div class="toggle"><span class="toggle-icon">+</span></div>
+    </div>
+    <div class="judgment-layer">
+      <div class="judgment-label">Hidden judgment layer</div>
+      <div class="judgment-grid">
+        <div class="judgment-col">
+          <h4>What actually happens here</h4>
+          <ul>
+            <li>Developmental editing first — does the piece work? Does it deliver on the brief? Does it have a real point of view? — before any sentence-level work</li>
+            <li>Deciding what to fix versus send back: fixing everything means the writer doesn't learn; sending everything back blows the deadline</li>
+            <li>Checking against the full content library — catching when a draft makes a point the team has already made</li>
+            <li>SEO checklist: meta description, header optimization, internal links, alt text — mechanical but currently entirely manual</li>
+          </ul>
+        </div>
+        <div class="judgment-col">
+          <h4>Where it breaks down</h4>
+          <ul>
+            <li>The manager is the single bottleneck — every piece waits, no backup editor exists</li>
+            <li>AI-assisted drafts are harder to edit than human-written drafts: the problems are buried, not obvious — superficially good, substantively weak — and take longer to find and fix</li>
+            <li>Editing AI-generated content is becoming the majority of the manager's week, which was the opposite of the intended outcome</li>
+            <li>Quality varies directly with manager bandwidth — when rushed, the edit is lighter than it should be</li>
+          </ul>
+        </div>
+      </div>
+      <div class="opportunity-row">
+        <div class="opp-block automate">
+          <div class="opp-label">Automate</div>
+          <div class="opp-text">SEO checklist execution: meta description drafting, header tag suggestions, internal link recommendations based on existing content library, alt text for images. Also: proofreading and grammar (Grammarly is already doing this well). These are the most mechanically repetitive parts of editing — "tedious every single time" per the audit — and are exactly the wrong use of an editor's time.</div>
+          <div class="ai-status status-working">In use — working (proofreading)</div>
+        </div>
+        <div class="opp-block augment">
+          <div class="opp-label">Augment</div>
+          <div class="opp-text">Pre-edit structural check: AI flags whether the piece delivers on the brief, whether the argument is coherent, whether the opening buries the real point, and whether the content overlaps significantly with existing published pieces. This gives the manager a triage layer before the close read — surface the structural issues so the human edit can focus on what AI can't fix (voice, taste, writer coaching).</div>
+          <span class="risk-toggle" onclick="toggleRisk(this)"><span class="risk-icon">⚠</span> Watch for</span>
+          <div class="risk-content">The prior attempt at AI-assisted developmental editing failed because the prompts were generic ("what's missing or unclear?"). The output described surface problems the manager could already see. A better approach: give AI the brief alongside the draft and ask "does this draft deliver on this specific brief?" with explicit criteria — target keyword, intended argument, audience, required differentiators. The more context AI has, the less generic its feedback. Without this framing, AI will keep producing comments the editor doesn't need.</div>
+        </div>
+        <div class="opp-block human">
+          <div class="opp-label">Keep Human</div>
+          <div class="opp-text">The quality call that requires taste: does this piece work for our audience? Would someone share it? Is the voice right — not just grammatically correct, but genuinely human? And the coaching layer: translating edit decisions into feedback the writer can apply to the next piece. This is where the editor's institutional knowledge of what "good" looks like for this brand actually lives — and no AI can replicate it without first having that standard documented.</div>
+          <span class="risk-toggle" onclick="toggleRisk(this)"><span class="risk-icon">⚠</span> Watch for</span>
+          <div class="risk-content">Bottleneck creation at high risk of becoming a ceiling. The manager already spends more time editing than on strategy — the stated mismatch between what the role should do and what it's doing. As AI-assisted drafts increase in volume, editing time increases too (counterintuitively), because the problems are subtler. Without relief on the checklist work and a pre-edit triage layer, the bottleneck tightens as output scales.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── STEP 5: PUBLISHING & DISTRIBUTION ─────────────── -->
+  <div class="step">
+    <div class="step-top" onclick="toggleStep(this)">
+      <div class="step-number">05</div>
+      <div class="step-main">
+        <div class="step-name">Publishing &amp; Distribution</div>
+        <div class="step-desc">CMS publishing, newsletter scheduling, social adaptation, and sales enablement entry</div>
+      </div>
+      <div class="step-tags">
+        <span class="tag tag-automate">Automate</span>
+        <span class="tag tag-augment">Augment</span>
+        <span class="tag tag-human">Keep human</span>
+      </div>
+      <div class="toggle"><span class="toggle-icon">+</span></div>
+    </div>
+    <div class="judgment-layer">
+      <div class="judgment-label">Hidden judgment layer</div>
+      <div class="judgment-grid">
+        <div class="judgment-col">
+          <h4>What actually happens here</h4>
+          <ul>
+            <li>Platform-specific formatting: what works in a Google Doc breaks in the CMS; newsletter layout in the email tool is finicky; social posts need to be adapted per platform, not copied</li>
+            <li>Timing judgment: technical posts perform better on LinkedIn Tuesday–Thursday mornings; newsletter open rates drop on Fridays — the coordinator has learned this through trial and error</li>
+            <li>Social adaptation: deciding which angle from a 1,500-word post will work as a LinkedIn hook or Twitter thread — the most creatively demanding part of the coordinator's job</li>
+            <li>Last-minute spot-checks before blog content goes live</li>
+          </ul>
+        </div>
+        <div class="judgment-col">
+          <h4>Where it breaks down</h4>
+          <ul>
+            <li>Last-minute changes after content is already scheduled — formatting needs to be redone</li>
+            <li>Blog-to-social adaptation happens under deadline pressure and is always the last thing before publishing — rushed social posts are basically just headlines with a link</li>
+            <li>Coordinator becomes a bottleneck when multiple pieces converge on the same day</li>
+            <li>Design turnaround on graphics delays publishing when images aren't ready</li>
+          </ul>
+        </div>
+      </div>
+      <div class="opportunity-row">
+        <div class="opp-block automate">
+          <div class="opp-label">Automate</div>
+          <div class="opp-text">Posting time optimization based on platform engagement data — the social scheduling tool's AI feature is already doing this and working. Newsletter scheduling and blog CMS publishing checklist execution (required fields, standard metadata) are good automation candidates. Entry into the sales enablement content library on publish could also be automated as a triggered action.</div>
+          <div class="ai-status status-working">In use — working (posting time optimization)</div>
+        </div>
+        <div class="opp-block augment">
+          <div class="opp-label">Augment</div>
+          <div class="opp-text">Social copy generation and newsletter subject lines as starting points — both already in use. The subject line workflow is working well (10 options in 30 seconds, coordinator picks the best one). Social copy is hit-or-miss: LinkedIn is usable 1–2 out of 5; Twitter requires 80% rewrite. The gap is prompt quality: generic "write 5 LinkedIn posts from this blog" prompts produce generic output. Prompts that include the brand voice, the specific audience, and the angle that worked best in the original post produce better starting material.</div>
+          <div class="ai-status status-guardrails">In use — needs guardrails (social copy)</div>
+          <span class="risk-toggle" onclick="toggleRisk(this)"><span class="risk-icon">⚠</span> Watch for</span>
+          <div class="risk-content">Inconsistent AI practices between use cases: subject lines are genuinely working, social copy is not, but both are described as "using ChatGPT." The risk is treating them as equivalent — accepting mediocre social copy because subject lines are fine, or discarding a good AI workflow because the adjacent one isn't working. These need to be evaluated and prompts built separately.</div>
+        </div>
+        <div class="opp-block human">
+          <div class="opp-label">Keep Human</div>
+          <div class="opp-text">Selecting the angle: which part of a 1,500-word post will resonate as a standalone social hook? This is a creative judgment that requires knowing the audience, knowing what's performed before, and knowing the difference between "useful summary" and "compelling enough to stop scrolling." The coordinator's ability to do this well is the difference between social content that extends the blog's reach and social content that no one engages with.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── STEP 6: PERFORMANCE ANALYSIS ─────────────────── -->
+  <div class="step">
+    <div class="step-top" onclick="toggleStep(this)">
+      <div class="step-number">06</div>
+      <div class="step-main">
+        <div class="step-name">Performance Analysis &amp; Iteration</div>
+        <div class="step-desc">Monthly data aggregation, insight extraction, and feedback into planning — currently the most shortcut step</div>
+      </div>
+      <div class="step-tags">
+        <span class="tag tag-automate">Automate</span>
+        <span class="tag tag-augment">Augment</span>
+        <span class="tag tag-stop">Stop / rethink</span>
+        <span class="badge-conditional">Conditional</span>
+      </div>
+      <div class="toggle"><span class="toggle-icon">+</span></div>
+    </div>
+    <div class="judgment-layer">
+      <div class="judgment-label">Hidden judgment layer</div>
+      <div class="judgment-grid">
+        <div class="judgment-col">
+          <h4>What actually happens here</h4>
+          <ul>
+            <li>Data aggregation across 4–5 tools (Google Analytics, Search Console, email platform, social platforms, CRM) — currently 3–4 hours of manual pulling and consolidating</li>
+            <li>Distinguishing signal from noise: a traffic spike might be podcast mention, not content performance; a dip might be an algorithm update, not a quality problem</li>
+            <li>Identifying patterns that cut across content types and writers — which formats rank, which topics convert, where engagement drops off</li>
+            <li>Feeding insights back into planning so the calendar improves based on evidence — currently the step that consistently gets skipped</li>
+          </ul>
+        </div>
+        <div class="judgment-col">
+          <h4>Where it breaks down</h4>
+          <ul>
+            <li>The manager consistently shortcuts this step — honest self-assessment in the audit</li>
+            <li>The monthly report is descriptive (here's what happened) not diagnostic (here's why and what to change) — the format is consistent but the analysis depth varies enormously</li>
+            <li>Insights identified in analysis rarely feed back into planning — the planning meeting moves fast, the insight gets forgotten</li>
+            <li>Data lives in multiple disconnected tools — the aggregation problem consumes the time that should go to thinking</li>
+          </ul>
+        </div>
+      </div>
+      <div class="conditional-note">
+        <strong>Conditional (Augment):</strong> AI-assisted pattern analysis is viable only after data aggregation is solved. If the data is still being pulled manually from five tools, automating the pull is the prerequisite — augmentation has nothing to work with until the inputs are consolidated. Augment if a unified data view exists or is built; defer AI analysis until then.
+      </div>
+      <div class="opportunity-row">
+        <div class="opp-block automate">
+          <div class="opp-label">Automate</div>
+          <div class="opp-text">Data aggregation into a unified dashboard: content performance from Analytics and Search Console, newsletter metrics from the email platform, social engagement from the scheduler, content-sourced pipeline from CRM. This is the 3–4 hour monthly task that currently crowds out all actual analysis. The aggregation itself has no judgment — it's pulling numbers from known sources on a schedule. Once automated, the manager has a data view to think from rather than spending half the time creating it.</div>
+        </div>
+        <div class="opp-block augment">
+          <div class="opp-label">Augment</div>
+          <div class="opp-text">Once data is consolidated: AI surfaces patterns — which content types rank fastest, which writers' content generates more downstream engagement, which keywords are gaining vs. plateauing, which newsletter topics produce the highest click-through. It flags anomalies (a post dramatically over- or underperforming for its keyword difficulty) and generates diagnostic questions for the manager to investigate. The goal is to shift the monthly report from "here's what happened" to "here's what's worth paying attention to."</div>
+          <span class="risk-toggle" onclick="toggleRisk(this)"><span class="risk-icon">⚠</span> Watch for</span>
+          <div class="risk-content">Plausible-but-wrong pattern detection is especially risky when external factors (algorithm updates, seasonal variation, earned media) explain performance better than content decisions. AI won't know a podcast mentioned the site — the manager does. The augmentation layer here is input to the manager's judgment, not a replacement for it. The manager still needs to apply the contextual knowledge that explains why the numbers look the way they do.</div>
+        </div>
+        <div class="opp-block stop">
+          <div class="opp-label">Stop / Rethink</div>
+          <div class="opp-text">The current monthly report format: a narrative summary of what the numbers say, produced once a month, that rarely changes what gets planned next cycle. The audit describes it clearly — the report is consistent in format, inconsistent in quality, and largely doesn't feed back into planning even when the insights are there. Before automating data aggregation or adding AI analysis, the output format and feedback mechanism need to be redesigned. A different cadence (weekly digest vs. monthly report), a different format (three questions the data answers, not a summary), or a different entry point into planning (a standing 15-minute calendar review at planning kickoff) may produce more actual change than a better-looking monthly PDF.</div>
+          <span class="risk-toggle" onclick="toggleRisk(this)"><span class="risk-icon">⚠</span> Watch for</span>
+          <div class="risk-content">Automating data aggregation for a report format that doesn't drive action makes the non-actionable report easier to produce — which is not the goal. The automation trap rule applies here at the sub-element level: don't automate the inputs to a process whose outputs aren't being used. Redesign the output format before investing in the pipeline that feeds it.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── SUMMARY ──────────────────────────────────────────── -->
+<div class="section-label">Summary</div>
+<div class="summary">
+  <div class="summary-grid">
+    <div class="summary-card automate">
+      <div class="card-label">Automate</div>
+      <div class="card-count">4</div>
+      <div class="card-desc">Mechanical work consuming high-value time: SERP data pulling, SEO checklist execution, posting time optimization, and performance data aggregation</div>
+    </div>
+    <div class="summary-card augment">
+      <div class="card-label">Augment</div>
+      <div class="card-count">6</div>
+      <div class="card-desc">Judgment-amplifying opportunities across every step — most already partially in use, all needing better structure to work reliably</div>
+    </div>
+    <div class="summary-card human">
+      <div class="card-label">Keep Human</div>
+      <div class="card-count">5</div>
+      <div class="card-desc">Strategy, voice, taste, and coaching — the parts that make content worth reading, and that AI cannot replicate without first having documented standards to check against</div>
+    </div>
+    <div class="summary-card stop">
+      <div class="card-label">Stop / Rethink</div>
+      <div class="card-count">1</div>
+      <div class="card-desc">The monthly report format — descriptive output that consistently doesn't drive planning changes should be redesigned before it's automated</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MEASUREMENT BASELINE ─────────────────────────────── -->
+<div class="section-label">Measurement Baseline</div>
+<div class="measure">
+  <div class="measure-header">
+    <h3>How we'll know it worked</h3>
+    <span>Baseline → target</span>
+  </div>
+  <div class="metrics-grid">
+    <div class="metric">
+      <div class="metric-name">Manager time: editing vs. strategy</div>
+      <div class="metric-baseline">Baseline: editing consumes the majority of 40 hrs/week — strategy gets what's left</div>
+      <div class="metric-arrow">→</div>
+      <div class="metric-target">Target: SEO checklist automation and pre-edit triage reduce editing load by ~30%, returning time to planning and strategy</div>
+    </div>
+    <div class="metric">
+      <div class="metric-name">AI-assisted draft quality (revision rate)</div>
+      <div class="metric-baseline">Baseline: Writer B keeps 50–60% of AI output; editing burden has increased since AI adoption</div>
+      <div class="metric-arrow">→</div>
+      <div class="metric-target">Target: Shared usage norm reduces revision burden — quality signal is editing time per piece returning to pre-AI baseline</div>
+    </div>
+    <div class="metric">
+      <div class="metric-name">Performance insights → planning changes</div>
+      <div class="metric-baseline">Baseline: Monthly report is descriptive, rarely drives planning decisions</div>
+      <div class="metric-arrow">→</div>
+      <div class="metric-target">Target: Redesigned feedback loop produces at least one planning change per cycle that's traceable to data — not gut feel</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SKILLS TO ACT ON THIS MAP ─────────────────────────── -->
+<div class="section-label">Skills to Act on This Map</div>
+<div class="skills">
+  <div class="skills-header">Capabilities needed to execute</div>
+  <div class="skills-list">
+    <div class="skill-entry">
+      <div class="skill-name">Brand voice documentation</div>
+      <div class="skill-why">The single most important prerequisite on this map. The brand voice — conversational, confident, specific, occasionally provocative — lives in the manager's ear and in the best-performing posts. Until it's written down as a usable standard, AI augmentation in drafting (Step 3) and editing (Step 4) has nothing to check against, the writer quality gap can't be addressed systematically, and the manager remains the irreplaceable quality gate. This isn't an AI skill — it's knowledge codification. Everything else depends on it.</div>
+    </div>
+    <div class="skill-entry">
+      <div class="skill-name">Structured prompting for content workflows</div>
+      <div class="skill-why">Current AI usage across the team is ad hoc — different prompts, different tools, different review standards, no shared approach. Steps 2, 3, and 5 all have AI in use with documented quality problems that trace directly to prompt quality. The skill needed is building prompts that include brief context, audience specifics, voice standards, and explicit evaluation criteria — not generic "write me a draft" prompts. Writer A has this instinctively; it needs to be formalized and shared.</div>
+    </div>
+    <div class="skill-entry">
+      <div class="skill-name">AI-output quality evaluation</div>
+      <div class="skill-why">The manager identifies the core problem: AI output is harder to edit than human drafts because it looks right superficially but falls apart under close read. The skill of distinguishing fluent-but-hollow from substantive needs to be taught explicitly and shared with the writers — because right now only the manager can reliably do it, which is why the editing bottleneck gets worse as AI use increases, not better.</div>
+    </div>
+    <div class="skill-entry">
+      <div class="skill-name">Data integration setup</div>
+      <div class="skill-why">Step 6's automation opportunity (and its Augment opportunity) is blocked by data fragmentation across five tools. The manager explicitly identifies this as the barrier: "If someone built me a dashboard, I'd use it." This is a one-time technical project — connecting Analytics, Search Console, email platform, social scheduler, and CRM into a unified view — that would unlock the highest-leverage feedback loop in the workflow. It requires someone with integration or data skills, not content skills.</div>
+    </div>
+    <div class="skill-entry">
+      <div class="skill-name">Process redesign before optimization</div>
+      <div class="skill-why">One Stop/Rethink classification on this map (the monthly report format), but the underlying pattern runs wider: the AI tools currently in use are being pointed at convenient problems rather than the highest-value ones. Acting on this map means being willing to fix the format of what analysis produces before investing in making it easier to produce — and addressing the writer quality gap explicitly rather than editing around it.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── FOOTER NOTE ──────────────────────────────────────── -->
+<div class="footer-note">
+  This map reflects a high-quality audit — the judgment layer is visible throughout, and all classifications are Confident. No gap report was produced.<br>
+  The central finding is not that AI is absent, but that it's being used inconsistently, without shared standards, and for the wrong sub-elements. The opportunity is not more AI — it's better-applied AI.
+</div>
+
+<!-- ── RECOMMENDED NEXT AUDITS ───────────────────────────── -->
+<div class="next-audits">
+  <div class="next-audits-label">Recommended next audits</div>
+  <div class="audit-rec">
+    <strong>Research &amp; Brief Creation (Step 2) — sub-workflow audit.</strong> This step carries three distinct classifications (Automate, Augment, Keep Human) across what the audit describes as multiple sequential activities: SERP research, competitive synthesis, brief writing, and brief review. A sub-workflow audit would clarify which sub-tasks are owned by the manager vs. writers, where the quality gap between writers is widest, and how much of the brief creation bottleneck is research vs. synthesis vs. writing. The macro map points here; the implementation detail requires a closer look.
+  </div>
+  <div class="audit-rec">
+    <strong>Editing &amp; Review (Step 4) — sub-workflow audit.</strong> The audit describes a step that bundles developmental editing, SEO checklist work, proofreading, and writer coaching — four activities with fundamentally different skill requirements and AI applicability. The step also reveals the workflow's most acute structural risk: single-person bottleneck with no backup. A sub-workflow audit would identify where relief is most achievable and what would need to be true before a second editor or reviewer could be introduced.
+  </div>
+</div>
+
+<script>
+  function toggleStep(topEl) {
+    const step = topEl.closest('.step');
+    const layer = step.querySelector('.judgment-layer');
+    const toggle = topEl.querySelector('.toggle');
+    const isOpen = layer.classList.contains('open');
+    layer.classList.toggle('open', !isOpen);
+    toggle.classList.toggle('open', !isOpen);
+  }
+
+  function toggleRisk(el) {
+    event.stopPropagation();
+    const content = el.nextElementSibling;
+    const isOpen = content.classList.contains('open');
+    content.classList.toggle('open', !isOpen);
+    el.innerHTML = isOpen
+      ? '<span class="risk-icon">⚠</span> Watch for'
+      : '<span class="risk-icon">⚠</span> Watch for ↑';
+  }
+</script>
+
+</body>
+</html>
