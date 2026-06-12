@@ -34,6 +34,8 @@ If the workflow is broken, the operator says so. It won't help you automate the 
 
 ## How it works
 
+**Want to try it first?** Grab one of the completed example audits in `examples/` and paste it into the operator. The LXD workflow audit (`examples/lxd-workflow-audit.md`) is the most complete — it'll produce a full confident map with risk callouts, skills, and measurement baseline. The status reporting audit (`examples/status-reporting-audit.md`) is the most interesting — it produces a "don't automate this" finding instead of a map.
+
 ### 1. Audit your workflow
 
 Two ways to complete your audit:
