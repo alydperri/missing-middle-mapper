@@ -1,0 +1,2152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Missing Middle Mapper — Workflow Audit Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11;
+    --surface: #15171a;
+    --surface2: #1a1c20;
+    --surface3: #20232a;
+    --border: #2a2d32;
+    --border-light: #363b44;
+    --text: #e8e9eb;
+    --text-muted: #7a7f8a;
+    --text-dim: #4a4f5a;
+    --accent: #a78bfa;
+    --accent-bg: #1e1a2e;
+    --accent-border: #3a3058;
+    --automate: #4ade80;
+    --automate-bg: #0d2b1a;
+    --automate-border: #1a4a2e;
+    --augment: #60a5fa;
+    --augment-bg: #0d1e35;
+    --augment-border: #1a3555;
+    --human: #f59e0b;
+    --human-bg: #2a1f08;
+    --human-border: #4a3510;
+    --stop: #f87171;
+    --stop-bg: #2a0f0f;
+    --stop-border: #4a1a1a;
+    --sidebar-w: 280px;
+    --max-w: 680px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    height: 100%;
+  }
+
+  body {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ============================================================
+     SIDEBAR
+     ============================================================ */
+
+  .sidebar {
+    width: var(--sidebar-w);
+    flex-shrink: 0;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    overflow-y: auto;
+  }
+
+  .sidebar-header {
+    padding: 20px 18px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sidebar-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: 20px;
+    font-style: italic;
+    margin: 0 0 4px;
+  }
+
+  .sidebar-subtitle {
+    font-family: 'DM Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .sidebar-nav {
+    flex: 1;
+    padding: 12px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .sidebar-section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    padding: 14px 10px 6px;
+  }
+
+  .sidebar-section-label:first-child {
+    padding-top: 6px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 10px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 13.5px;
+    color: var(--text-muted);
+    transition: background 0.15s ease, color 0.15s ease;
+    position: relative;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+  }
+
+  .nav-item:hover {
+    background: var(--surface2);
+    color: var(--text);
+  }
+
+  .nav-item.active {
+    background: var(--accent-bg);
+    color: var(--text);
+    border: 1px solid var(--accent-border);
+  }
+
+  .nav-item.active .nav-status {
+    color: var(--accent);
+  }
+
+  .nav-status {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .nav-status svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--text-dim);
+  }
+
+  .status-dot.partial {
+    background: var(--human);
+  }
+
+  .status-dot.complete {
+    background: var(--automate);
+  }
+
+  .nav-label {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .nav-meta {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    flex-shrink: 0;
+  }
+
+  .nav-item.active .nav-meta {
+    color: var(--text-muted);
+  }
+
+  /* Step row controls (reorder/delete) */
+  .step-controls {
+    display: none;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+  }
+
+  .nav-item.step-item:hover .step-controls,
+  .nav-item.step-item.active .step-controls {
+    display: flex;
+  }
+
+  .nav-item.step-item:hover .nav-meta,
+  .nav-item.step-item.active .nav-meta {
+    display: none;
+  }
+
+  .ctrl-btn {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: color 0.15s ease, background 0.15s ease;
+    flex-shrink: 0;
+    padding: 0;
+  }
+
+  .ctrl-btn:hover {
+    color: var(--text);
+    background: var(--surface3);
+  }
+
+  .ctrl-btn:hover.delete-hover {
+    color: var(--stop);
+  }
+
+  .ctrl-btn:disabled {
+    opacity: 0.25;
+    cursor: not-allowed;
+  }
+
+  .ctrl-btn svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  /* Add step button */
+  .add-step-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 10px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text-muted);
+    border: 1px dashed var(--border-light);
+    background: none;
+    width: 100%;
+    text-align: left;
+    font-family: 'DM Sans', sans-serif;
+    margin-top: 4px;
+    transition: all 0.15s ease;
+  }
+
+  .add-step-btn:hover {
+    color: var(--accent);
+    border-color: var(--accent-border);
+    background: var(--accent-bg);
+  }
+
+  .add-step-btn svg {
+    width: 13px;
+    height: 13px;
+    flex-shrink: 0;
+  }
+
+  /* Review/download pinned at bottom */
+  .sidebar-footer {
+    padding: 12px 10px 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .review-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 11px 13px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text);
+    background: var(--surface2);
+    border: 1px solid var(--border-light);
+    width: 100%;
+    text-align: left;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s ease;
+  }
+
+  .review-btn:hover {
+    border-color: var(--accent-border);
+    background: var(--accent-bg);
+  }
+
+  .review-btn.active {
+    border-color: var(--accent-border);
+    background: var(--accent-bg);
+    color: var(--accent);
+  }
+
+  .review-btn-meta {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+
+  /* ============================================================
+     MAIN FLOW AREA
+     ============================================================ */
+
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    min-width: 0;
+  }
+
+  .progress-shell {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(14, 15, 17, 0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .progress-inner {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 16px 24px;
+  }
+
+  .progress-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 10px;
+    gap: 16px;
+  }
+
+  .progress-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .progress-label .current {
+    color: var(--text);
+  }
+
+  .confidence-readout {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }
+
+  .confidence-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--text-dim);
+    transition: background 0.3s ease;
+    flex-shrink: 0;
+  }
+
+  .confidence-dot.active {
+    background: var(--accent);
+    box-shadow: 0 0 8px rgba(167, 139, 250, 0.6);
+  }
+
+  .confidence-text .confident { color: var(--accent); }
+  .confidence-text { color: var(--text-muted); }
+
+  .progress-track {
+    display: flex;
+    gap: 3px;
+    height: 4px;
+  }
+
+  .progress-segment {
+    flex: 1;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .progress-segment::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .progress-segment.filled::after { transform: scaleX(1); }
+  .progress-segment.active::after { transform: scaleX(var(--fill, 0.1)); }
+  .progress-segment.judgment::after { background: var(--human); }
+
+  /* Flow body */
+
+  .flow-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: var(--max-w);
+    width: 100%;
+    margin: 0 auto;
+    padding: 48px 24px 32px;
+    min-height: calc(100vh - 86px);
+  }
+
+  .question-card, .interstitial, .panel-card {
+    animation: fadeSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    border-radius: 4px;
+    margin-bottom: 24px;
+  }
+
+  .section-tag.formal, .section-tag.framing, .section-tag.value {
+    color: var(--text-muted);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+  }
+
+  .section-tag.judgment {
+    color: var(--human);
+    background: var(--human-bg);
+    border: 1px solid var(--human-border);
+  }
+
+  .section-tag.signals {
+    color: var(--augment);
+    background: var(--augment-bg);
+    border: 1px solid var(--augment-border);
+  }
+
+  .section-tag-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .question-text {
+    font-family: 'Instrument Serif', serif;
+    font-size: 32px;
+    line-height: 1.25;
+    font-weight: 400;
+    margin: 0 0 14px;
+    max-width: 560px;
+  }
+
+  .question-sub {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-muted);
+    margin: 0 0 24px;
+    max-width: 540px;
+  }
+
+  .answer-area textarea, .answer-area input[type="text"] {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    padding: 16px;
+    resize: vertical;
+    min-height: 120px;
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+
+  .answer-area input[type="text"] {
+    min-height: unset;
+    padding: 14px 16px;
+  }
+
+  .answer-area textarea:focus, .answer-area input[type="text"]:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: var(--surface2);
+  }
+
+  .answer-area textarea::placeholder, .answer-area input::placeholder {
+    color: var(--text-dim);
+  }
+
+  .example-toggle {
+    margin-top: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11.5px;
+    letter-spacing: 0.02em;
+    color: var(--text-muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 0;
+    transition: color 0.15s ease;
+  }
+
+  .example-toggle:hover { color: var(--accent); }
+
+  .example-toggle svg {
+    width: 11px;
+    height: 11px;
+    transition: transform 0.25s ease;
+    flex-shrink: 0;
+  }
+
+  .example-toggle.open svg { transform: rotate(90deg); }
+
+  .example-panel {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .example-panel.open { max-height: 400px; }
+
+  .example-panel-inner {
+    margin-top: 12px;
+    padding: 16px 18px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-left: 2px solid var(--accent-border);
+    border-radius: 6px;
+    font-size: 13.5px;
+    line-height: 1.65;
+  }
+
+  .example-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .example-row:last-child { margin-bottom: 0; }
+
+  .example-marker {
+    flex-shrink: 0;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 2px 6px;
+    border-radius: 3px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    margin-top: 1px;
+  }
+
+  .example-marker.good {
+    color: var(--automate);
+    background: var(--automate-bg);
+    border: 1px solid var(--automate-border);
+  }
+
+  .example-marker.thin {
+    color: var(--stop);
+    background: var(--stop-bg);
+    border: 1px solid var(--stop-border);
+  }
+
+  .example-text { color: var(--text-muted); font-style: italic; }
+
+  /* Footer nav */
+
+  .flow-footer {
+    position: sticky;
+    bottom: 0;
+    background: linear-gradient(to top, var(--bg) 60%, transparent);
+    padding: 24px 24px 28px;
+  }
+
+  .flow-footer-inner {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .nav-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 12px 22px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 1px solid var(--border-light);
+    background: var(--surface);
+    color: var(--text);
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .nav-btn:hover { border-color: var(--text-muted); }
+
+  .nav-btn.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #1a1325;
+    font-weight: 600;
+  }
+
+  .nav-btn.primary:hover { background: #b39cfb; }
+
+  .nav-btn.ghost {
+    background: none;
+    border-color: transparent;
+    color: var(--text-muted);
+  }
+
+  .nav-btn.ghost:hover {
+    color: var(--text);
+    border-color: transparent;
+    background: var(--surface2);
+  }
+
+  .nav-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  .skip-hint {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    text-align: center;
+    margin-top: 12px;
+  }
+
+  /* Interstitial */
+
+  .interstitial {
+    text-align: center;
+  }
+
+  .interstitial-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+  }
+
+  .interstitial-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: 40px;
+    font-style: italic;
+    margin: 0 0 16px;
+  }
+
+  .interstitial-body {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-muted);
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  .interstitial-body strong { color: var(--text); font-weight: 500; }
+
+  /* Step name input on first screen of a step */
+  .step-name-row {
+    margin-top: 28px;
+    max-width: 380px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+  }
+
+  .step-name-row label {
+    display: block;
+    font-family: 'DM Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+
+  .step-name-row input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    padding: 12px 14px;
+  }
+
+  .step-name-row input:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: var(--surface2);
+  }
+
+  /* ============================================================
+     REVIEW SCREEN
+     ============================================================ */
+
+  .review-wrap {
+    max-width: 760px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  .review-header {
+    margin-bottom: 36px;
+  }
+
+  .review-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: 42px;
+    font-style: italic;
+    margin: 0 0 12px;
+  }
+
+  .review-sub {
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: var(--text-muted);
+    max-width: 560px;
+  }
+
+  .review-summary {
+    display: flex;
+    gap: 10px;
+    margin: 24px 0 36px;
+    flex-wrap: wrap;
+  }
+
+  .summary-chip {
+    font-family: 'DM Mono', monospace;
+    font-size: 11.5px;
+    padding: 7px 13px;
+    border-radius: 999px;
+    border: 1px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .summary-chip .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  .summary-chip.confident { border-color: var(--automate-border); background: var(--automate-bg); color: var(--automate); }
+  .summary-chip.confident .dot { background: var(--automate); }
+  .summary-chip.provisional { border-color: var(--human-border); background: var(--human-bg); color: var(--human); }
+  .summary-chip.provisional .dot { background: var(--human); }
+  .summary-chip.neutral { color: var(--text-muted); }
+  .summary-chip.neutral .dot { background: var(--text-dim); }
+
+  .review-section {
+    margin-bottom: 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface);
+    overflow: hidden;
+  }
+
+  .review-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    gap: 16px;
+  }
+
+  .review-section-header:hover { background: var(--surface2); }
+
+  .review-section-title-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  .review-section-title {
+    font-size: 15px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .review-section-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    padding: 3px 8px;
+    border-radius: 4px;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .review-section-badge.confident { color: var(--automate); background: var(--automate-bg); border: 1px solid var(--automate-border); }
+  .review-section-badge.provisional { color: var(--human); background: var(--human-bg); border: 1px solid var(--human-border); }
+  .review-section-badge.neutral { color: var(--text-muted); background: var(--surface2); border: 1px solid var(--border); }
+
+  .review-section-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  .review-edit-link {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    text-decoration: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: 1px solid var(--border-light);
+    background: none;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+  }
+
+  .review-edit-link:hover { color: var(--accent); border-color: var(--accent-border); }
+
+  .chevron {
+    width: 14px;
+    height: 14px;
+    color: var(--text-dim);
+    transition: transform 0.25s ease;
+    flex-shrink: 0;
+  }
+
+  .review-section.open .chevron { transform: rotate(90deg); }
+
+  .review-section-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-top: 1px solid transparent;
+  }
+
+  .review-section.open .review-section-body {
+    border-top: 1px solid var(--border);
+  }
+
+  .review-qa {
+    padding: 18px 20px;
+  }
+
+  .review-qa:not(:last-child) {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .review-q {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin: 0 0 8px;
+    font-weight: 500;
+  }
+
+  .review-a {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text);
+    white-space: pre-wrap;
+  }
+
+  .review-a.empty {
+    color: var(--text-dim);
+    font-style: italic;
+  }
+
+  .review-subgroup-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    padding: 14px 20px 4px;
+  }
+
+  .review-subgroup-label.judgment { color: var(--human); }
+  .review-subgroup-label.signals { color: var(--augment); }
+
+  .download-section {
+    margin-top: 40px;
+    padding: 28px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface);
+    text-align: center;
+  }
+
+  .download-section h3 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 24px;
+    font-style: italic;
+    margin: 0 0 10px;
+    font-weight: 400;
+  }
+
+  .download-section p {
+    font-size: 13.5px;
+    color: var(--text-muted);
+    max-width: 420px;
+    margin: 0 auto 20px;
+    line-height: 1.6;
+  }
+
+  .download-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14.5px;
+    font-weight: 600;
+    padding: 14px 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: #1a1325;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .download-btn:hover { background: #b39cfb; }
+
+  .download-btn svg { width: 16px; height: 16px; }
+
+  /* Confirm delete modal */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    backdrop-filter: blur(2px);
+  }
+
+  .modal {
+    background: var(--surface2);
+    border: 1px solid var(--border-light);
+    border-radius: 10px;
+    padding: 24px;
+    max-width: 360px;
+    width: 90%;
+  }
+
+  .modal h4 {
+    font-size: 15px;
+    margin: 0 0 8px;
+  }
+
+  .modal p {
+    font-size: 13.5px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin: 0 0 20px;
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+
+  .modal-actions .nav-btn {
+    padding: 9px 16px;
+    font-size: 13px;
+  }
+
+  .modal-actions .nav-btn.danger {
+    background: var(--stop-bg);
+    border-color: var(--stop-border);
+    color: var(--stop);
+  }
+
+  .modal-actions .nav-btn.danger:hover {
+    background: var(--stop-border);
+  }
+
+  /* Mobile */
+
+  @media (max-width: 860px) {
+    body { flex-direction: column; }
+    .sidebar {
+      width: 100%;
+      height: auto;
+      max-height: 280px;
+      position: relative;
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+    }
+    .question-text { font-size: 26px; }
+    .interstitial-title { font-size: 30px; }
+    .flow-main { padding: 32px 18px 24px; }
+    .progress-inner { padding: 14px 18px; }
+    .review-wrap { padding: 32px 16px 60px; }
+    .review-title { font-size: 32px; }
+  }
+
+  @media (max-width: 600px) {
+    .progress-top { flex-direction: column; align-items: flex-start; gap: 6px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-title">Workflow Audit</div>
+    <div class="sidebar-subtitle">Missing Middle Mapper</div>
+  </div>
+  <div class="sidebar-nav" id="sidebarNav"></div>
+  <div class="sidebar-footer">
+    <button class="review-btn" id="reviewBtn">
+      <span>Review &amp; download</span>
+      <span class="review-btn-meta" id="reviewMeta"></span>
+    </button>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="progress-shell" id="progressShell">
+    <div class="progress-inner">
+      <div class="progress-top">
+        <div class="progress-label" id="qLabel"></div>
+        <div class="confidence-readout" id="confidenceReadout">
+          <span class="confidence-dot" id="confDot"></span>
+          <span class="confidence-text" id="confText"></span>
+        </div>
+      </div>
+      <div class="progress-track" id="track"></div>
+    </div>
+  </div>
+
+  <div class="flow-main" id="flowMain"></div>
+
+  <div class="flow-footer" id="flowFooter">
+    <div class="flow-footer-inner">
+      <button class="nav-btn ghost" id="backBtn">← Back</button>
+      <button class="nav-btn primary" id="nextBtn">Continue →</button>
+    </div>
+    <div class="skip-hint" id="skipHint"></div>
+  </div>
+</div>
+
+<div id="modalRoot"></div>
+
+<script>
+// ============================================================
+// QUESTION TEMPLATES (from audit-template.md)
+// ============================================================
+
+const FRAMING_QUESTIONS = [
+  {
+    id: 'wf_name',
+    text: "What's this workflow called?",
+    sub: "Give it a plain name. \"Content approval process,\" not \"Phase 2 cross-functional content lifecycle.\"",
+    placeholder: "e.g. Partner qualification"
+  },
+  {
+    id: 'wf_outcome',
+    text: "What is this workflow supposed to produce or enable?",
+    sub: "The most important question in the audit. State what changes in the world when this workflow runs well.",
+    placeholder: "e.g. Identify partners worth a six-month investment of onboarding time...",
+    example: {
+      good: "\u201CProduce learning assets that measurably close a defined knowledge gap for a specific audience.\u201D",
+      thin: "\u201CKeep stakeholders informed\u201D or \u201CSupport the team.\u201D If you struggle to answer this, that's a signal worth paying attention to."
+    }
+  },
+  {
+    id: 'wf_frequency',
+    text: "How often does it run?",
+    sub: "Frequency and volume. This helps gauge the impact of improvements.",
+    placeholder: "e.g. 8-12 projects per quarter, or 30-50 per week..."
+  },
+  {
+    id: 'wf_owner',
+    text: "Who owns it?",
+    sub: "The team or person accountable for the workflow. Not who does the work, but who'd answer for it if asked.",
+    placeholder: "e.g. The JAPAC partnerships team, reporting to..."
+  },
+  {
+    id: 'wf_good',
+    text: "What does \u201Cgood\u201D look like? Describe this workflow running perfectly.",
+    sub: "Paint the picture. What happens when everything goes right? How fast does it move? What doesn't happen (no rework, no confusion, no delays)?",
+    placeholder: "e.g. An inquiry comes in, gets reviewed within a day..."
+  }
+];
+
+const VALUE_QUESTIONS = [
+  {
+    id: 'val_breakdown',
+    text: "What happens if this workflow breaks down or runs badly?",
+    sub: "Think about consequences, not just inconvenience. Customers? Revenue? Employee experience? Compliance?",
+    placeholder: "e.g. We onboard a partner who never produces, wasting six months..."
+  },
+  {
+    id: 'val_scale',
+    text: "How many people, teams, or customers are affected by this workflow's output?",
+    sub: "Count the people who use, receive, or depend on what this workflow produces, not just the people who do the work.",
+    placeholder: "e.g. The whole JAPAC partnerships team, plus every partner who applies..."
+  },
+  {
+    id: 'val_time',
+    text: "Roughly how much time does this workflow consume per cycle, across everyone involved?",
+    sub: "Add it up across all roles. Estimates are fine.",
+    placeholder: "e.g. 3 people x 2 hours per inquiry, ~15 inquiries a month..."
+  },
+  {
+    id: 'val_strategic',
+    text: "Is this workflow connected to something leadership is actively trying to improve?",
+    sub: "Is there executive attention on this area? Tied to a current initiative, OKR, or known pain point?",
+    placeholder: "e.g. Partner-sourced revenue is a stated FY27 priority..."
+  },
+  {
+    id: 'val_delight',
+    text: "If AI made this workflow significantly better, would the people doing the work feel it?",
+    sub: "Would the improvement free up meaningful time, reduce real frustration, or enable work people actually want to do?",
+    placeholder: "e.g. Yes, the team currently dreads the discovery-call backlog..."
+  }
+];
+
+const STEP_FORMAL_QUESTIONS = [
+  {
+    id: 'trigger',
+    text: "What triggers this step?",
+    sub: "What has to happen before this step starts? A request arrives, a draft is complete, a meeting ends, an approval is given.",
+    placeholder: "e.g. A new partner inquiry is submitted through the portal..."
+  },
+  {
+    id: 'produces',
+    text: "What does this step produce?",
+    sub: "What exists after this step that didn't exist before? A decision, a document, a draft, a set of findings, an approval.",
+    placeholder: "e.g. A qualified / not-qualified decision and a logged record..."
+  }
+];
+
+const STEP_JUDGMENT_QUESTIONS = [
+  {
+    id: 'new_person_wrong',
+    text: "What would a new person get wrong here that an experienced person wouldn't?",
+    sub: "Think about the last time you onboarded someone. What did they struggle with that you now do without thinking?",
+    placeholder: "e.g. A new reviewer would take the inquiry at face value...",
+    example: {
+      good: "\u201CThey would accept the request as stated. Experienced people know the stated need is often not the real need.\u201D",
+      thin: "\u201CThey'd need time to learn the process.\u201D True of any step \u2014 what specifically would they get wrong?"
+    }
+  },
+  {
+    id: 'undocumented_info',
+    text: "What information do you use here that isn't written down anywhere?",
+    sub: "The stuff in your head. Pattern recognition, institutional memory, who to call. If you disappeared tomorrow, what wouldn't your replacement find in any doc?",
+    placeholder: "e.g. Whether a partner's sales motion is transactional vs. services-led...",
+    example: {
+      good: "\u201CWho is asking matters. Some stakeholders have a track record of clear requests. I adjust my process based on who's across the table.\u201D",
+      thin: "\u201CNothing, it's all documented.\u201D If genuinely true, great \u2014 but for most knowledge work, there's more in your head than in the system."
+    }
+  },
+  {
+    id: 'failure_cause',
+    text: "When this step goes badly, what usually caused it?",
+    sub: "Don't describe what went wrong at the surface. Describe what caused it \u2014 a specific, recurring pattern.",
+    placeholder: "e.g. We booked a discovery call with a partner who was purely transactional...",
+    example: {
+      good: "\u201CWe didn't ask enough diagnostic questions during intake, so we built to the stated need instead of the real need.\u201D",
+      thin: "\u201CThe client changed their mind.\u201D That's a surface description, not a cause."
+    }
+  },
+  {
+    id: 'dependencies',
+    text: "Who else is involved in this step, and what do you need from them?",
+    sub: "Name the other people or roles. What do you need from them? What happens when they don't deliver?",
+    placeholder: "e.g. Sales ops logs the inquiry \u2014 if it's miscategorized, it gets missed...",
+    example: {
+      good: "\u201CSales ops owns the intake queue. If they don't tag region correctly, the inquiry sits unassigned for days.\u201D",
+      thin: "\u201CJust me, really.\u201D If this step is genuinely solo end to end, say so \u2014 but check first."
+    }
+  }
+];
+
+const STEP_SIGNAL_QUESTIONS = [
+  {
+    id: 'checklist_or_judgment',
+    text: "Can someone follow a checklist here, or does it require judgment?",
+    sub: "Be honest about which parts are procedural and which require thinking. If it's a split, describe both.",
+    placeholder: "e.g. Logging the inquiry is checklistable. Reading the signals isn't..."
+  },
+  {
+    id: 'consistency',
+    text: "How consistently does this step produce a reliable output?",
+    sub: "If three different people ran this step on the same input, would they produce roughly the same result, or vary a lot?",
+    placeholder: "e.g. Varies hugely depending on who reviews it..."
+  },
+  {
+    id: 'cost_of_error',
+    text: "What's the cost if this step is done wrong?",
+    sub: "Think about severity and reversibility. Low-cost and recoverable, or high-cost and hard to walk back?",
+    placeholder: "e.g. Onboarding the wrong partner costs six months of team time..."
+  },
+  {
+    id: 'bottleneck',
+    text: "Does this step currently slow the workflow down?",
+    sub: "Is this step a bottleneck? If so \u2014 volume, complexity, or dependency on someone else?",
+    placeholder: "e.g. Not a bottleneck in volume, but each review takes longer than it should..."
+  },
+  {
+    id: 'friction',
+    text: "What parts of this step are the most tedious, time-consuming, or unpleasant?",
+    sub: "Point at the friction. What drains you? What would you hand off if you could?",
+    placeholder: "e.g. Digging through a partner's website and LinkedIn to piece together context..."
+  }
+];
+
+const CURRENT_AI_QUESTION = {
+  id: 'current_ai',
+  text: "Are you currently using AI in this step?",
+  sub: "If you use ChatGPT, Copilot, or any AI tool here, describe what it does and how you check the output. If not, just say so, that's useful too.",
+  placeholder: "e.g. Not currently, or: I use ChatGPT to draft summaries but always re-check against..."
+};
+
+// ============================================================
+// STATE
+// ============================================================
+
+let steps = [
+  { id: cryptoId(), name: 'Step 1', answers: {} }
+];
+let activeSectionId = 'framing'; // 'framing' | 'value' | step.id | 'review'
+let activeQuestionIndex = 0; // index within the active section's question list
+const framingAnswers = {};
+const valueAnswers = {};
+
+function cryptoId() {
+  return 'id_' + Math.random().toString(36).slice(2, 10);
+}
+
+// ============================================================
+// SECTION DEFINITIONS
+// Build a flat "screen list" per section: interstitial + questions
+// ============================================================
+
+function getSectionScreens(sectionId) {
+  if (sectionId === 'framing') {
+    return [
+      {
+        type: 'interstitial',
+        eyebrow: 'Workflow framing',
+        title: 'Let\u2019s start with the basics',
+        body: 'Five questions about the workflow as a whole. <strong>The second one is the most important question in the whole audit</strong> \u2014 what this workflow is supposed to produce.'
+      },
+      ...FRAMING_QUESTIONS.map(q => ({ type: 'question', section: 'framing', sectionLabel: 'Workflow framing', q, answerStore: framingAnswers }))
+    ];
+  }
+  if (sectionId === 'value') {
+    return [
+      {
+        type: 'interstitial',
+        eyebrow: 'Workflow value',
+        title: 'Is this worth investing in?',
+        body: 'Five questions to help prioritize. <strong>Not every workflow needs AI redesign</strong> \u2014 these answers help figure out whether this one does.'
+      },
+      ...VALUE_QUESTIONS.map(q => ({ type: 'question', section: 'value', sectionLabel: 'Workflow value', q, answerStore: valueAnswers }))
+    ];
+  }
+  // step section
+  const step = steps.find(s => s.id === sectionId);
+  if (!step) return [];
+  const stepLabel = step.name || 'Step';
+  const screens = [];
+  screens.push({
+    type: 'interstitial',
+    eyebrow: stepLabel,
+    title: 'The basics',
+    body: 'Two quick questions about how this step starts and what it produces. Nothing tricky here, this sets the frame for what comes next.',
+    stepNameField: true,
+    stepId: step.id
+  });
+  STEP_FORMAL_QUESTIONS.forEach(q => screens.push({ type: 'question', section: 'formal', sectionLabel: stepLabel + ' \u2014 the basics', q, answerStore: step.answers }));
+  screens.push({
+    type: 'interstitial',
+    eyebrow: stepLabel,
+    title: 'The judgment layer',
+    body: 'This is <strong>the most important part of the audit</strong>. Four questions about the knowledge that doesn\u2019t live in any doc, the stuff an experienced person does without thinking. Thin answers here produce thin maps.'
+  });
+  STEP_JUDGMENT_QUESTIONS.forEach(q => screens.push({ type: 'question', section: 'judgment', sectionLabel: stepLabel + ' \u2014 judgment layer', q, answerStore: step.answers }));
+  screens.push({
+    type: 'interstitial',
+    eyebrow: stepLabel,
+    title: 'Classification signals',
+    body: 'Five quick reads on how this step behaves: how procedural it is, how consistent the output is, what it costs when it goes wrong. These help the operator decide automate, augment, keep human, or stop/rethink.'
+  });
+  STEP_SIGNAL_QUESTIONS.forEach(q => screens.push({ type: 'question', section: 'signals', sectionLabel: stepLabel + ' \u2014 classification signals', q, answerStore: step.answers }));
+  screens.push({
+    type: 'interstitial',
+    eyebrow: stepLabel,
+    title: 'One last thing',
+    body: 'A quick check on whether AI is already part of this step today.'
+  });
+  screens.push({ type: 'question', section: 'formal', sectionLabel: stepLabel + ' \u2014 current AI use', q: CURRENT_AI_QUESTION, answerStore: step.answers });
+  return screens;
+}
+
+// All ordered section ids (for "next section" navigation)
+function getOrderedSectionIds() {
+  return ['framing', 'value', ...steps.map(s => s.id)];
+}
+
+// ============================================================
+// CONFIDENCE LOGIC
+// ============================================================
+
+function judgmentAnsweredCount(stepAnswers) {
+  return STEP_JUDGMENT_QUESTIONS.filter(q => (stepAnswers[q.id] || '').trim().length > 15).length;
+}
+
+function stepConfidence(step) {
+  const count = judgmentAnsweredCount(step.answers);
+  if (count === 0) return 'empty';
+  if (count < STEP_JUDGMENT_QUESTIONS.length) return 'provisional';
+  return 'confident';
+}
+
+// All questions that belong to a step, across every sub-section
+const ALL_STEP_QUESTIONS = [
+  ...STEP_FORMAL_QUESTIONS,
+  ...STEP_JUDGMENT_QUESTIONS,
+  ...STEP_SIGNAL_QUESTIONS,
+  CURRENT_AI_QUESTION
+];
+
+// How many of a step's questions (across all sub-sections) have any answer at all
+function stepAnsweredCount(step) {
+  return ALL_STEP_QUESTIONS.filter(q => (step.answers[q.id] || '').trim().length > 0).length;
+}
+
+function sectionAnsweredCount(questions, store) {
+  return questions.filter(q => (store[q.id] || '').trim().length > 0).length;
+}
+
+// ============================================================
+// SIDEBAR RENDERING
+// ============================================================
+
+const sidebarNav = document.getElementById('sidebarNav');
+const reviewBtn = document.getElementById('reviewBtn');
+const reviewMeta = document.getElementById('reviewMeta');
+const modalRoot = document.getElementById('modalRoot');
+
+function iconCheck() {
+  return '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l3.5 3.5L13 5"/></svg>';
+}
+function iconUp() {
+  return '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10l4-4 4 4"/></svg>';
+}
+function iconDown() {
+  return '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>';
+}
+function iconTrash() {
+  return '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h10M5.5 4V2.8c0-.4.3-.8.8-.8h3.4c.5 0 .8.4.8.8V4M6 4v8.2c0 .4.3.8.8.8h2.4c.5 0 .8-.4.8-.8V4M6.7 7v3M9.3 7v3"/></svg>';
+}
+function iconPlus() {
+  return '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 3v10M3 8h10"/></svg>';
+}
+
+function renderSidebar() {
+  sidebarNav.innerHTML = '';
+
+  // Workflow framing
+  sidebarNav.appendChild(makeSectionLabel('Workflow'));
+  sidebarNav.appendChild(makeNavItem({
+    id: 'framing',
+    label: 'Workflow framing',
+    statusClass: navStatusClass(sectionAnsweredCount(FRAMING_QUESTIONS, framingAnswers), FRAMING_QUESTIONS.length),
+    meta: `${sectionAnsweredCount(FRAMING_QUESTIONS, framingAnswers)}/${FRAMING_QUESTIONS.length}`
+  }));
+  sidebarNav.appendChild(makeNavItem({
+    id: 'value',
+    label: 'Workflow value',
+    statusClass: navStatusClass(sectionAnsweredCount(VALUE_QUESTIONS, valueAnswers), VALUE_QUESTIONS.length),
+    meta: `${sectionAnsweredCount(VALUE_QUESTIONS, valueAnswers)}/${VALUE_QUESTIONS.length}`
+  }));
+
+  // Steps
+  sidebarNav.appendChild(makeSectionLabel('Steps'));
+  steps.forEach((step, idx) => {
+    const answered = stepAnsweredCount(step);
+    const total = ALL_STEP_QUESTIONS.length;
+    const conf = stepConfidence(step);
+
+    let statusClass = 'empty';
+    let meta = 'not started';
+
+    if (answered === 0) {
+      statusClass = 'empty';
+      meta = 'not started';
+    } else if (answered < total) {
+      statusClass = 'partial';
+      meta = conf === 'confident' ? 'confident' : conf === 'provisional' ? 'provisional' : `${answered}/${total}`;
+    } else {
+      statusClass = 'complete';
+      meta = conf === 'confident' ? 'confident' : 'provisional';
+    }
+
+    sidebarNav.appendChild(makeStepNavItem(step, idx, statusClass, meta));
+  });
+
+  // Add step
+  const addBtn = document.createElement('button');
+  addBtn.className = 'add-step-btn';
+  addBtn.innerHTML = `${iconPlus()} Add step`;
+  addBtn.addEventListener('click', () => {
+    const newStep = { id: cryptoId(), name: `Step ${steps.length + 1}`, answers: {} };
+    steps.push(newStep);
+    goToSection(newStep.id);
+  });
+  sidebarNav.appendChild(addBtn);
+
+  // Review button state
+  const allConfident = steps.every(s => stepConfidence(s) === 'confident');
+  const startedCount = steps.filter(s => stepAnsweredCount(s) > 0).length;
+  reviewBtn.classList.toggle('active', activeSectionId === 'review');
+  if (allConfident) {
+    reviewMeta.textContent = 'all confident';
+    reviewMeta.style.color = 'var(--automate)';
+  } else if (startedCount < steps.length) {
+    reviewMeta.textContent = `${startedCount}/${steps.length} started`;
+    reviewMeta.style.color = '';
+  } else {
+    reviewMeta.textContent = 'some provisional';
+    reviewMeta.style.color = 'var(--human)';
+  }
+}
+
+function navStatusClass(answered, total) {
+  if (answered === 0) return 'empty';
+  if (answered < total) return 'partial';
+  return 'complete';
+}
+
+function makeSectionLabel(text) {
+  const div = document.createElement('div');
+  div.className = 'sidebar-section-label';
+  div.textContent = text;
+  return div;
+}
+
+function makeNavItem({ id, label, statusClass, meta }) {
+  const btn = document.createElement('button');
+  btn.className = 'nav-item' + (activeSectionId === id ? ' active' : '');
+  const dotHtml = statusClass === 'complete'
+    ? `<span style="color:var(--automate); display:flex;">${iconCheck()}</span>`
+    : `<span class="status-dot ${statusClass === 'partial' ? 'partial' : ''}"></span>`;
+  btn.innerHTML = `
+    <span class="nav-status">${dotHtml}</span>
+    <span class="nav-label">${label}</span>
+    <span class="nav-meta">${meta}</span>
+  `;
+  btn.addEventListener('click', () => goToSection(id));
+  return btn;
+}
+
+function makeStepNavItem(step, idx, statusClass, meta) {
+  const btn = document.createElement('button');
+  btn.className = 'nav-item step-item' + (activeSectionId === step.id ? ' active' : '');
+
+  const dotHtml = statusClass === 'complete'
+    ? `<span style="color:var(--automate); display:flex;">${iconCheck()}</span>`
+    : `<span class="status-dot ${statusClass === 'partial' ? 'partial' : ''}"></span>`;
+
+  btn.innerHTML = `
+    <span class="nav-status">${dotHtml}</span>
+    <span class="nav-label">${escapeHtml(step.name || `Step ${idx + 1}`)}</span>
+    <span class="nav-meta">${meta}</span>
+    <span class="step-controls">
+      <button class="ctrl-btn" data-action="up" ${idx === 0 ? 'disabled' : ''} title="Move up">${iconUp()}</button>
+      <button class="ctrl-btn" data-action="down" ${idx === steps.length - 1 ? 'disabled' : ''} title="Move down">${iconDown()}</button>
+      <button class="ctrl-btn delete-hover" data-action="delete" title="Delete step">${iconTrash()}</button>
+    </span>
+  `;
+
+  btn.addEventListener('click', (e) => {
+    const actionBtn = e.target.closest('[data-action]');
+    if (actionBtn) {
+      e.stopPropagation();
+      const action = actionBtn.getAttribute('data-action');
+      if (action === 'up') moveStep(idx, -1);
+      else if (action === 'down') moveStep(idx, 1);
+      else if (action === 'delete') confirmDeleteStep(step.id);
+      return;
+    }
+    goToSection(step.id);
+  });
+
+  return btn;
+}
+
+function moveStep(idx, dir) {
+  const newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= steps.length) return;
+  const tmp = steps[idx];
+  steps[idx] = steps[newIdx];
+  steps[newIdx] = tmp;
+  renderSidebar();
+}
+
+function confirmDeleteStep(stepId) {
+  const step = steps.find(s => s.id === stepId);
+  if (!step) return;
+  if (steps.length === 1) {
+    showModal({
+      title: 'Can\u2019t delete the last step',
+      body: 'A workflow audit needs at least one step. Add another step before removing this one.',
+      confirmLabel: 'Got it',
+      onConfirm: closeModal,
+      hideCancel: true
+    });
+    return;
+  }
+  showModal({
+    title: `Delete \u201C${escapeHtml(step.name || 'this step')}\u201D?`,
+    body: 'This removes everything you\u2019ve entered for this step. This can\u2019t be undone.',
+    confirmLabel: 'Delete step',
+    danger: true,
+    onConfirm: () => {
+      const idx = steps.findIndex(s => s.id === stepId);
+      steps.splice(idx, 1);
+      if (activeSectionId === stepId) {
+        // navigate to a sensible neighbor
+        const fallback = steps[Math.min(idx, steps.length - 1)];
+        goToSection(fallback.id);
+      } else {
+        renderSidebar();
+      }
+      closeModal();
+    }
+  });
+}
+
+function showModal({ title, body, confirmLabel, danger, onConfirm, hideCancel }) {
+  modalRoot.innerHTML = `
+    <div class="modal-overlay" id="modalOverlay">
+      <div class="modal">
+        <h4>${title}</h4>
+        <p>${body}</p>
+        <div class="modal-actions">
+          ${hideCancel ? '' : '<button class="nav-btn ghost" id="modalCancel">Cancel</button>'}
+          <button class="nav-btn ${danger ? 'danger' : 'primary'}" id="modalConfirm">${confirmLabel}</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.getElementById('modalConfirm').addEventListener('click', onConfirm);
+  const cancelBtn = document.getElementById('modalCancel');
+  if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+  document.getElementById('modalOverlay').addEventListener('click', (e) => {
+    if (e.target.id === 'modalOverlay') closeModal();
+  });
+}
+
+function closeModal() {
+  modalRoot.innerHTML = '';
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str || '';
+  return div.innerHTML;
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+
+function goToSection(sectionId, questionIndex) {
+  activeSectionId = sectionId;
+  activeQuestionIndex = questionIndex || 0;
+  closeModal();
+  render();
+  window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
+}
+
+// ============================================================
+// MAIN FLOW RENDERING
+// ============================================================
+
+const flowMain = document.getElementById('flowMain');
+const backBtn = document.getElementById('backBtn');
+const nextBtn = document.getElementById('nextBtn');
+const qLabel = document.getElementById('qLabel');
+const skipHint = document.getElementById('skipHint');
+const confDot = document.getElementById('confDot');
+const confText = document.getElementById('confText');
+const track = document.getElementById('track');
+const progressShell = document.getElementById('progressShell');
+const flowFooter = document.getElementById('flowFooter');
+const confidenceReadout = document.getElementById('confidenceReadout');
+
+function render() {
+  if (activeSectionId === 'review') {
+    renderReview();
+    return;
+  }
+  renderFlow();
+}
+
+function renderFlow() {
+  progressShell.style.display = '';
+  flowFooter.style.display = '';
+
+  const screens = getSectionScreens(activeSectionId);
+  if (activeQuestionIndex >= screens.length) activeQuestionIndex = screens.length - 1;
+  if (activeQuestionIndex < 0) activeQuestionIndex = 0;
+  const screen = screens[activeQuestionIndex];
+
+  flowMain.innerHTML = '';
+
+  // Build progress track from question-type screens only
+  const questionScreens = screens.filter(s => s.type === 'question');
+  track.innerHTML = '';
+  questionScreens.forEach(s => {
+    const seg = document.createElement('div');
+    seg.className = 'progress-segment' + (s.section === 'judgment' ? ' judgment' : '');
+    track.appendChild(seg);
+  });
+
+  if (screen.type === 'interstitial') {
+    const div = document.createElement('div');
+    div.className = 'interstitial';
+    let extra = '';
+    if (screen.stepNameField) {
+      const step = steps.find(s => s.id === screen.stepId);
+      extra = `
+        <div class="step-name-row">
+          <label for="stepNameInput">Step name</label>
+          <input type="text" id="stepNameInput" value="${escapeHtml(step.name)}" placeholder="e.g. Discovery call" />
+        </div>
+      `;
+    }
+    div.innerHTML = `
+      <div class="interstitial-eyebrow">${screen.eyebrow}</div>
+      <div class="interstitial-title">${screen.title}</div>
+      <div class="interstitial-body">${screen.body}</div>
+      ${extra}
+    `;
+    flowMain.appendChild(div);
+
+    if (screen.stepNameField) {
+      const input = document.getElementById('stepNameInput');
+      input.addEventListener('input', (e) => {
+        const step = steps.find(s => s.id === screen.stepId);
+        step.name = e.target.value;
+        renderSidebar();
+        // also update label live
+        qLabel.textContent = screen.eyebrow;
+      });
+      input.addEventListener('blur', (e) => {
+        const step = steps.find(s => s.id === screen.stepId);
+        if (!e.target.value.trim()) {
+          step.name = `Step ${steps.findIndex(s=>s.id===step.id)+1}`;
+          renderSidebar();
+        }
+      });
+    }
+
+    qLabel.textContent = screen.eyebrow;
+    nextBtn.textContent = activeQuestionIndex === 0 ? 'Begin \u2192' : 'Continue \u2192';
+    skipHint.textContent = '';
+    confidenceReadout.style.visibility = isStepSection(activeSectionId) ? 'visible' : 'hidden';
+  } else {
+    const card = document.createElement('div');
+    card.className = 'question-card';
+    const q = screen.q;
+    const store = screen.answerStore;
+
+    let exampleHtml = '';
+    if (q.example) {
+      exampleHtml = `
+        <button class="example-toggle" id="exToggle">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l4 4-4 4"/></svg>
+          See a good vs. thin answer
+        </button>
+        <div class="example-panel" id="exPanel">
+          <div class="example-panel-inner">
+            <div class="example-row">
+              <span class="example-marker good">Good</span>
+              <span class="example-text">${q.example.good}</span>
+            </div>
+            <div class="example-row">
+              <span class="example-marker thin">Thin</span>
+              <span class="example-text">${q.example.thin}</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    const isShortField = (activeSectionId === 'framing' && (q.id === 'wf_name' || q.id === 'wf_frequency' || q.id === 'wf_owner'));
+    const inputHtml = isShortField
+      ? `<input type="text" id="answerBox" placeholder="${escapeHtml(q.placeholder)}" value="${escapeHtml(store[q.id] || '')}" />`
+      : `<textarea id="answerBox" placeholder="${escapeHtml(q.placeholder)}">${escapeHtml(store[q.id] || '')}</textarea>`;
+
+    card.innerHTML = `
+      <div class="section-tag ${screen.section}"><span class="section-tag-dot"></span>${screen.sectionLabel}</div>
+      <h2 class="question-text">${q.text}</h2>
+      <p class="question-sub">${q.sub}</p>
+      <div class="answer-area">
+        ${inputHtml}
+        ${exampleHtml}
+      </div>
+    `;
+    flowMain.appendChild(card);
+
+    const qIdx = questionScreens.indexOf(screen);
+    qLabel.innerHTML = `${screen.sectionLabel} &nbsp;\u00B7&nbsp; <span class="current">Question ${qIdx + 1} of ${questionScreens.length}</span>`;
+
+    const isLastScreen = activeQuestionIndex === screens.length - 1;
+    const isLastSection = getOrderedSectionIds().indexOf(activeSectionId) === getOrderedSectionIds().length - 1;
+    if (isLastScreen) {
+      nextBtn.textContent = isLastSection ? 'Review & download \u2192' : 'Next section \u2192';
+    } else {
+      nextBtn.textContent = 'Continue \u2192';
+    }
+
+    skipHint.textContent = (screen.section === 'judgment') ? 'This is the part that matters most for an accurate map.' : '';
+
+    const answerBox = document.getElementById('answerBox');
+    answerBox.addEventListener('input', (e) => {
+      store[q.id] = e.target.value;
+      updateConfidence();
+      renderSidebar();
+      updateTrack();
+    });
+    answerBox.focus();
+
+    if (q.example) {
+      const toggle = document.getElementById('exToggle');
+      const panel = document.getElementById('exPanel');
+      toggle.addEventListener('click', () => {
+        toggle.classList.toggle('open');
+        panel.classList.toggle('open');
+      });
+    }
+
+    confidenceReadout.style.visibility = isStepSection(activeSectionId) ? 'visible' : 'hidden';
+  }
+
+  backBtn.disabled = (activeQuestionIndex === 0 && getOrderedSectionIds().indexOf(activeSectionId) === 0);
+  updateTrack();
+  updateConfidence();
+  renderSidebar();
+}
+
+function isStepSection(sectionId) {
+  return steps.some(s => s.id === sectionId);
+}
+
+function updateTrack() {
+  const screens = getSectionScreens(activeSectionId);
+  const screen = screens[activeQuestionIndex];
+  const questionScreens = screens.filter(s => s.type === 'question');
+  const qIdx = questionScreens.indexOf(screen);
+
+  questionScreens.forEach((s, i) => {
+    const seg = track.children[i];
+    if (!seg) return;
+    seg.classList.remove('filled', 'active');
+    const hasAnswer = (s.answerStore[s.q.id] || '').trim().length > 0;
+    if (i < qIdx || (i === qIdx && hasAnswer)) {
+      seg.classList.add('filled');
+    } else if (i === qIdx) {
+      seg.classList.add('active');
+      seg.style.setProperty('--fill', '0.1');
+    }
+  });
+}
+
+function updateConfidence() {
+  if (!isStepSection(activeSectionId)) return;
+  const step = steps.find(s => s.id === activeSectionId);
+  if (!step) return;
+  const count = judgmentAnsweredCount(step.answers);
+  const total = STEP_JUDGMENT_QUESTIONS.length;
+
+  if (count === 0) {
+    confDot.classList.remove('active');
+    confText.innerHTML = 'judgment layer not yet visible';
+  } else if (count < total) {
+    confDot.classList.add('active');
+    confText.innerHTML = `judgment layer ${count}/${total} \u2014 <span class="confident">building toward confident</span>`;
+  } else {
+    confDot.classList.add('active');
+    confText.innerHTML = `<span class="confident">judgment layer visible \u2014 confident map</span>`;
+  }
+}
+
+// ============================================================
+// NEXT / BACK HANDLERS
+// ============================================================
+
+nextBtn.addEventListener('click', () => {
+  const screens = getSectionScreens(activeSectionId);
+  if (activeQuestionIndex < screens.length - 1) {
+    activeQuestionIndex++;
+    render();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } else {
+    // move to next section
+    const order = getOrderedSectionIds();
+    const idx = order.indexOf(activeSectionId);
+    if (idx < order.length - 1) {
+      goToSection(order[idx + 1], 0);
+    } else {
+      goToSection('review');
+    }
+  }
+});
+
+backBtn.addEventListener('click', () => {
+  if (activeQuestionIndex > 0) {
+    activeQuestionIndex--;
+    render();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } else {
+    const order = getOrderedSectionIds();
+    const idx = order.indexOf(activeSectionId);
+    if (idx > 0) {
+      const prevId = order[idx - 1];
+      const prevScreens = getSectionScreens(prevId);
+      goToSection(prevId, prevScreens.length - 1);
+    }
+  }
+});
+
+reviewBtn.addEventListener('click', () => goToSection('review'));
+
+// Keyboard nav
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey && document.activeElement.tagName !== 'TEXTAREA') {
+    if (activeSectionId !== 'review') nextBtn.click();
+  }
+});
+
+// ============================================================
+// REVIEW SCREEN
+// ============================================================
+
+function renderReview() {
+  progressShell.style.display = 'none';
+  flowFooter.style.display = 'none';
+  renderSidebar();
+
+  flowMain.style.justifyContent = 'flex-start';
+  flowMain.innerHTML = '';
+
+  const wrap = document.createElement('div');
+  wrap.className = 'review-wrap';
+
+  const confidentSteps = steps.filter(s => stepConfidence(s) === 'confident').length;
+  const provisionalSteps = steps.filter(s => stepConfidence(s) === 'provisional').length;
+  const emptySteps = steps.filter(s => stepConfidence(s) === 'empty').length;
+
+  let summaryChips = '';
+  if (confidentSteps > 0) summaryChips += `<div class="summary-chip confident"><span class="dot"></span>${confidentSteps} confident</div>`;
+  if (provisionalSteps > 0) summaryChips += `<div class="summary-chip provisional"><span class="dot"></span>${provisionalSteps} provisional</div>`;
+  if (emptySteps > 0) summaryChips += `<div class="summary-chip neutral"><span class="dot"></span>${emptySteps} not started</div>`;
+
+  wrap.innerHTML = `
+    <div class="review-header">
+      <h1 class="review-title">Review your audit</h1>
+      <p class="review-sub">Everything you've entered, organized the way the operator will read it. Expand a section to check the details, or jump back in to edit anything. Steps marked provisional are missing parts of the judgment layer \u2014 the operator will note this in its gap report, but you can fill them in now if you'd rather.</p>
+      <div class="review-summary">${summaryChips}</div>
+    </div>
+    <div id="reviewSections"></div>
+    <div class="download-section">
+      <h3>Ready when you are</h3>
+      <p>This downloads a markdown file matching the Missing Middle Mapper's expected input. Drop it into your Claude Project alongside the operator to generate your AI opportunity map.</p>
+      <button class="download-btn" id="downloadBtn">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8m0 0l-3-3m3 3l3-3M3 13h10"/></svg>
+        Download audit.md
+      </button>
+    </div>
+  `;
+
+  flowMain.appendChild(wrap);
+
+  const reviewSections = document.getElementById('reviewSections');
+
+  // Framing section
+  reviewSections.appendChild(buildReviewSection({
+    title: 'Workflow framing',
+    badge: badgeFor(sectionAnsweredCount(FRAMING_QUESTIONS, framingAnswers), FRAMING_QUESTIONS.length),
+    onEdit: () => goToSection('framing', 1),
+    rows: FRAMING_QUESTIONS.map(q => ({ q: q.text, a: framingAnswers[q.id] }))
+  }));
+
+  // Value section
+  reviewSections.appendChild(buildReviewSection({
+    title: 'Workflow value',
+    badge: badgeFor(sectionAnsweredCount(VALUE_QUESTIONS, valueAnswers), VALUE_QUESTIONS.length),
+    onEdit: () => goToSection('value', 1),
+    rows: VALUE_QUESTIONS.map(q => ({ q: q.text, a: valueAnswers[q.id] }))
+  }));
+
+  // Step sections
+  steps.forEach((step, idx) => {
+    const conf = stepConfidence(step);
+    let badge;
+    if (conf === 'confident') badge = { cls: 'confident', label: 'confident' };
+    else if (conf === 'provisional') badge = { cls: 'provisional', label: 'provisional' };
+    else badge = { cls: 'neutral', label: 'not started' };
+
+    const groups = [
+      { label: null, questions: STEP_FORMAL_QUESTIONS },
+      { label: 'Judgment layer', cls: 'judgment', questions: STEP_JUDGMENT_QUESTIONS },
+      { label: 'Classification signals', cls: 'signals', questions: STEP_SIGNAL_QUESTIONS },
+      { label: null, questions: [CURRENT_AI_QUESTION] }
+    ];
+
+    reviewSections.appendChild(buildReviewSection({
+      title: `Step ${idx + 1}: ${step.name || 'Untitled step'}`,
+      badge,
+      onEdit: () => goToSection(step.id, 1),
+      groups: groups.map(g => ({
+        label: g.label,
+        cls: g.cls,
+        rows: g.questions.map(q => ({ q: q.text, a: step.answers[q.id] }))
+      }))
+    }));
+  });
+
+  document.getElementById('downloadBtn').addEventListener('click', downloadMarkdown);
+}
+
+function badgeFor(answered, total) {
+  if (answered === 0) return { cls: 'neutral', label: 'not started' };
+  if (answered < total) return { cls: 'provisional', label: `${answered}/${total}` };
+  return { cls: 'confident', label: 'complete' };
+}
+
+function buildReviewSection({ title, badge, onEdit, rows, groups }) {
+  const section = document.createElement('div');
+  section.className = 'review-section';
+
+  const header = document.createElement('div');
+  header.className = 'review-section-header';
+  header.innerHTML = `
+    <div class="review-section-title-group">
+      <span class="review-section-title">${escapeHtml(title)}</span>
+      <span class="review-section-badge ${badge.cls}">${badge.label}</span>
+    </div>
+    <div class="review-section-right">
+      <button class="review-edit-link" data-edit>Edit</button>
+      <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3l5 5-5 5"/></svg>
+    </div>
+  `;
+
+  const body = document.createElement('div');
+  body.className = 'review-section-body';
+  const bodyInner = document.createElement('div');
+
+  if (groups) {
+    groups.forEach(g => {
+      if (g.label) {
+        const lbl = document.createElement('div');
+        lbl.className = 'review-subgroup-label' + (g.cls ? ' ' + g.cls : '');
+        lbl.textContent = g.label;
+        bodyInner.appendChild(lbl);
+      }
+      g.rows.forEach(r => bodyInner.appendChild(buildQARow(r)));
+    });
+  } else {
+    rows.forEach(r => bodyInner.appendChild(buildQARow(r)));
+  }
+
+  body.appendChild(bodyInner);
+  section.appendChild(header);
+  section.appendChild(body);
+
+  header.addEventListener('click', (e) => {
+    if (e.target.closest('[data-edit]')) {
+      e.stopPropagation();
+      onEdit();
+      return;
+    }
+    section.classList.toggle('open');
+    body.style.maxHeight = section.classList.contains('open') ? body.scrollHeight + 'px' : '0';
+  });
+
+  return section;
+}
+
+function buildQARow({ q, a }) {
+  const row = document.createElement('div');
+  row.className = 'review-qa';
+  const hasAnswer = (a || '').trim().length > 0;
+  row.innerHTML = `
+    <div class="review-q">${escapeHtml(q)}</div>
+    <div class="review-a ${hasAnswer ? '' : 'empty'}">${hasAnswer ? escapeHtml(a) : 'Not answered yet'}</div>
+  `;
+  return row;
+}
+
+// ============================================================
+// MARKDOWN EXPORT
+// ============================================================
+
+function downloadMarkdown() {
+  const lines = [];
+  lines.push(`# Workflow Audit: ${framingAnswers.wf_name || 'Untitled workflow'}`);
+  lines.push('');
+  lines.push('## Workflow-level framing');
+  lines.push('');
+  lines.push(`**Workflow name:** ${framingAnswers.wf_name || '_(not answered)_'}`);
+  lines.push('');
+  lines.push(`**Outcome:** ${framingAnswers.wf_outcome || '_(not answered)_'}`);
+  lines.push('');
+  lines.push(`**Frequency:** ${framingAnswers.wf_frequency || '_(not answered)_'}`);
+  lines.push('');
+  lines.push(`**Owner:** ${framingAnswers.wf_owner || '_(not answered)_'}`);
+  lines.push('');
+  lines.push(`**What "good" looks like:** ${framingAnswers.wf_good || '_(not answered)_'}`);
+  lines.push('');
+  lines.push('## Workflow value');
+  lines.push('');
+  lines.push(`**Impact if this breaks down:** ${valueAnswers.val_breakdown || '_(not answered)_'}`);
+  lines.push('');
+  lines.push(`**Scale (people/teams/customers affected):** ${valueAnswers.val_scale || '_(not answered)_'}`);
+  lines.push('');
+  lines.push(`**Time consumed per cycle:** ${valueAnswers.val_time || '_(not answered)_'}`);
+  lines.push('');
+  lines.push(`**Strategic relevance:** ${valueAnswers.val_strategic || '_(not answered)_'}`);
+  lines.push('');
+  lines.push(`**Delight potential:** ${valueAnswers.val_delight || '_(not answered)_'}`);
+  lines.push('');
+  lines.push('---');
+  lines.push('');
+
+  steps.forEach((step, idx) => {
+    lines.push(`## Step ${idx + 1}: ${step.name || 'Untitled step'}`);
+    lines.push('');
+    lines.push(`**What triggers this step?**`);
+    lines.push(step.answers.trigger || '_(not answered)_');
+    lines.push('');
+    lines.push(`**What does this step produce?**`);
+    lines.push(step.answers.produces || '_(not answered)_');
+    lines.push('');
+    lines.push('### Judgment layer');
+    lines.push('');
+    STEP_JUDGMENT_QUESTIONS.forEach(q => {
+      lines.push(`**${q.text}**`);
+      lines.push(step.answers[q.id] || '_(not answered)_');
+      lines.push('');
+    });
+    lines.push('### Classification signals');
+    lines.push('');
+    STEP_SIGNAL_QUESTIONS.forEach(q => {
+      lines.push(`**${q.text}**`);
+      lines.push(step.answers[q.id] || '_(not answered)_');
+      lines.push('');
+    });
+    lines.push('### Current AI usage');
+    lines.push('');
+    lines.push(step.answers.current_ai || '_(not answered)_');
+    lines.push('');
+    lines.push('---');
+    lines.push('');
+  });
+
+  const blob = new Blob([lines.join('\n')], { type: 'text/markdown' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  const safeName = (framingAnswers.wf_name || 'workflow-audit').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  a.download = `${safeName || 'workflow-audit'}.md`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// ============================================================
+// INIT
+// ============================================================
+
+render();
+
+
+</script>
+</body>
+</html>
