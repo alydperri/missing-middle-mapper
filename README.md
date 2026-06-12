@@ -36,6 +36,8 @@ If the workflow is broken, the operator says so. It won't help you automate the 
 
 **Want to try it first?** Grab one of the completed example audits in `examples/` and paste it into the operator. The LXD workflow audit (`examples/lxd-workflow-audit.md`) is the most complete — it'll produce a full confident map with risk callouts, skills, and measurement baseline. The status reporting audit (`examples/status-reporting-audit.md`) is the most interesting — it produces a "don't automate this" finding instead of a map.
 
+**Want to see what the output looks like?** [View a completed opportunity map](https://alydperri.github.io/missing-middle-mapper/reference/lxd-example-opportunity-map.html) — expand the steps to see the judgment layer, classifications, and risk callouts.
+
 ### 1. Audit your workflow
 
 Two ways to complete your audit:
