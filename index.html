@@ -108,12 +108,14 @@ nav {
   transition: color .15s, background .15s;
 }
 .nav-links a:hover { color: var(--ink); background: var(--paper-2); }
+.nav-links a.nav-repo,
 .nav-repo {
   font-family: var(--ff-mono); font-size: 11px; letter-spacing: 0.03em;
-  background: var(--ink); color: var(--paper); text-decoration: none;
+  background: var(--ink); color: #ffffff !important; text-decoration: none;
   padding: 8px 15px; border-radius: 7px; transition: opacity .15s;
 }
-.nav-repo:hover { opacity: .86; }
+.nav-links a.nav-repo:hover,
+.nav-repo:hover { opacity: .86; background: var(--ink); color: #ffffff !important; }
 @media (max-width: 720px){ .nav-links a:not(.nav-repo){ display: none; } }
 
 /* ─────────── HERO ─────────── */
@@ -138,41 +140,6 @@ nav {
 .btn-ghost:hover { border-color: var(--ink); }
 .hero-note { font-family: var(--ff-mono); font-size: 11px; color: var(--ink-faint); margin-top: 18px; letter-spacing: 0.01em; }
 
-/* signature reveal strip */
-.reveal { max-width: var(--maxw); margin: 64px auto 0; padding: 0 28px; }
-.reveal-cap {
-  display: flex; justify-content: space-between; align-items: baseline; gap: 16px;
-  font-family: var(--ff-mono); font-size: 11px; letter-spacing: 0.04em; color: var(--ink-faint);
-  border-bottom: 1px solid var(--rule); padding-bottom: 12px; margin-bottom: 18px;
-}
-.reveal-cap b { color: var(--ink-soft); font-weight: 500; }
-.strip { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
-@media (max-width: 680px){ .strip { grid-template-columns: repeat(2,1fr); } }
-.cell {
-  background: var(--card); border: 1px solid var(--rule); border-radius: 11px;
-  padding: 16px 16px 15px; min-height: 112px; position: relative; overflow: hidden;
-  display: flex; flex-direction: column; justify-content: space-between;
-}
-.cell-n { font-family: var(--ff-mono); font-size: 10px; color: var(--ink-faint); letter-spacing: 0.08em; }
-.cell-name { font-size: 13.5px; font-weight: 500; color: var(--ink); line-height: 1.3; transition: filter .5s ease, opacity .5s ease; }
-.cell-tag {
-  font-family: var(--ff-mono); font-size: 9.5px; letter-spacing: 0.06em; text-transform: uppercase;
-  padding: 3px 8px; border-radius: 5px; align-self: flex-start;
-  border: 1px solid; opacity: 1; transform: translateY(0); transition: opacity .5s ease, transform .5s ease;
-}
-.cell .cell-name { transition: filter .5s ease, opacity .5s ease; }
-/* hidden (pre-reveal) state */
-.cell.hidden-state .cell-name { filter: blur(5px); opacity: .5; }
-.cell.hidden-state .cell-tag { opacity: 0 !important; }
-.cell.hidden-state::after {
-  content: "?"; position: absolute; right: 14px; bottom: 12px;
-  font-family: var(--ff-display); font-style: italic; font-size: 22px; color: var(--rule-2);
-}
-.t-auto  { color: var(--automate); background: var(--automate-bg); border-color: var(--automate-ln); }
-.t-aug   { color: var(--augment);  background: var(--augment-bg);  border-color: var(--augment-ln); }
-.t-human { color: var(--human);    background: var(--human-bg);    border-color: var(--human-ln); }
-.t-stop  { color: var(--stop);     background: var(--stop-bg);     border-color: var(--stop-ln); }
-
 /* ─────────── SECTION SCAFFOLD ─────────── */
 .sec { padding: 96px 28px; }
 .sec-in { max-width: var(--maxw); margin: 0 auto; }
@@ -188,9 +155,8 @@ nav {
 .dip-h { font-family: var(--ff-display); font-size: 23px; font-weight: 400; margin: 14px 0 12px; letter-spacing: -0.01em; }
 .dip-t { font-size: 14.5px; color: var(--ink-soft); line-height: 1.62; }
 .root {
-  margin-top: 14px; padding: 30px 32px; border-radius: 14px;
-  background: var(--accent-soft); border: 1px solid var(--accent-line);
-  font-size: 18px; line-height: 1.6; color: var(--ink);
+  margin-top: 14px; font-size: 15.5px; color: var(--ink-soft); line-height: 1.7;
+  max-width: 64ch; padding-left: 18px; border-left: 2px solid var(--accent-line);
 }
 .root b { color: var(--accent); font-weight: 600; }
 
@@ -263,8 +229,13 @@ nav {
 .layer-col h5 { font-family: var(--ff-mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 10px; }
 .layer-col li { list-style: none; font-size: 13px; color: var(--ink-soft); line-height: 1.55; padding-left: 16px; position: relative; margin-bottom: 8px; }
 .layer-col li::before { content: "—"; position: absolute; left: 0; color: var(--rule-2); }
-.opp-row { margin-top: 22px; padding-top: 22px; border-top: 1px solid var(--rule); display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.opp-row { margin-top: 22px; padding-top: 22px; border-top: 1px solid var(--rule); display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 @media (max-width: 640px){ .opp-row { grid-template-columns: 1fr; } }
+.prov-note {
+  margin-top: 18px; padding: 12px 16px; border-radius: 8px;
+  background: var(--accent-soft); border: 1px solid var(--accent-line);
+  font-family: var(--ff-mono); font-size: 11px; letter-spacing: 0.04em; color: var(--accent);
+}
 .opp { padding: 14px 15px; border-radius: 10px; border: 1px solid; }
 .opp.o-aug   { background: var(--augment-bg);  border-color: var(--augment-ln); }
 .opp.o-human { background: var(--human-bg);    border-color: var(--human-ln); }
@@ -279,7 +250,11 @@ nav {
 .risk-body { display: none; font-size: 12.5px; color: var(--ink-soft); line-height: 1.6; padding: 13px 15px; border: 1px solid var(--rule); border-top: none; border-radius: 0 0 8px 8px; background: var(--card); }
 .risk-body.open { display: block; }
 
-.includes { margin-top: 22px; display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+.inc-label {
+  font-family: var(--ff-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--ink-faint); margin-top: 32px; margin-bottom: 14px;
+}
+.includes { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
 @media (max-width: 640px){ .includes { grid-template-columns: 1fr; } }
 .inc { display: flex; gap: 11px; align-items: flex-start; font-size: 13px; color: var(--ink-soft); line-height: 1.45; }
 .inc b { color: var(--ink); font-weight: 600; display: block; font-size: 13.5px; }
@@ -346,7 +321,7 @@ footer { padding: 30px 28px; display: flex; align-items: center; justify-content
     <a href="#what">What it does</a>
     <a href="#how">How it works</a>
     <a href="#see">See it</a>
-    <a class="nav-repo" href="https://github.com/alydperri/missing-middle-mapper">Get the repo ↗</a>
+    <a class="nav-repo" href="https://github.com/alydperri/missing-middle-mapper">Get the files ↗</a>
   </div>
 </nav>
 
@@ -357,30 +332,17 @@ footer { padding: 30px 28px; display: flex; align-items: center; justify-content
     <h1 class="display fu d2">AI can't improve work <em>you can't describe.</em></h1>
     <p class="hero-sub fu d3">Most AI rollouts skip the one step that decides everything — making the work visible before redesigning it. The Missing Middle Mapper reads an audit of a single workflow, surfaces the judgment hiding inside each step, then tells you where AI fits, where it doesn't, and what to fix first.</p>
     <div class="hero-cta fu d4">
-      <a class="btn btn-primary" href="https://github.com/alydperri/missing-middle-mapper">Get the repo ↗</a>
+      <a class="btn btn-primary" href="https://github.com/alydperri/missing-middle-mapper">Get the files ↗</a>
       <a class="btn btn-ghost" href="#see">See a real map ↓</a>
     </div>
-    <div class="hero-note fu d5">Open the folder in Claude Code · paste your audit · get a map.</div>
+    <div class="hero-note fu d5">Open the folder in Claude Code · upload your audit · get a map.</div>
   </div>
 </header>
 
-<!-- signature: a workflow, before & after the map -->
-<section class="reveal reveal-on" id="strip">
-  <div class="reveal-cap">
-    <span>A workflow, before the map → <b>after</b></span>
-    <span id="stripState">hidden</span>
-  </div>
-  <div class="strip" id="strip-grid">
-    <div class="cell hidden-state"><span class="cell-n">STEP 01</span><span class="cell-name">Submission &amp; intake</span><span class="cell-tag t-auto">Automate</span></div>
-    <div class="cell hidden-state"><span class="cell-n">STEP 02</span><span class="cell-name">Editorial review</span><span class="cell-tag t-aug">Augment</span></div>
-    <div class="cell hidden-state"><span class="cell-n">STEP 03</span><span class="cell-name">Revision loop</span><span class="cell-tag t-stop">Stop / Rethink</span></div>
-    <div class="cell hidden-state"><span class="cell-n">STEP 04</span><span class="cell-name">Approval routing</span><span class="cell-tag t-stop">Stop / Rethink</span></div>
-    <div class="cell hidden-state"><span class="cell-n">STEP 05</span><span class="cell-name">Final judgment call</span><span class="cell-tag t-human">Keep Human</span></div>
-  </div>
-</section>
+
 
 <!-- ───────── PROBLEM ───────── -->
-<section class="sec" id="problem" style="padding-top:104px;">
+<section class="sec" id="problem">
   <div class="sec-in">
     <div class="eyebrow">The problem</div>
     <h2 class="display">Two failure modes. <em>One root cause.</em></h2>
@@ -433,7 +395,7 @@ footer { padding: 30px 28px; display: flex; align-items: center; justify-content
         <div class="rung-n">2</div>
         <div class="rung-b">
           <div class="rung-h">Run it in Claude Code</div>
-          <div class="rung-t">Open the folder as a workspace, paste your completed audit, and send one message.</div>
+          <div class="rung-t">Open the folder as a workspace, upload or paste your completed audit.</div>
           <div class="prompt"><span class="pc">&gt;</span> Produce an AI opportunity map from this workflow audit.</div>
         </div>
       </div>
@@ -480,45 +442,47 @@ footer { padding: 30px 28px; display: flex; align-items: center; justify-content
           <div class="layer-col">
             <h5>What actually happens here</h5>
             <ul>
-              <li>The editor applies different scrutiny by content type — blog, customer email, social — but the criteria for each aren't written down</li>
+              <li>The editor applies different treatment by content type — blog, customer email, and social each get a different level of review — but the criteria for each are not documented</li>
               <li>A style guide exists but doesn't cover everything; "sounds right for the brand" is the operative standard</li>
-              <li>The editor silently tracks which strategic messages the exec team cares about this week</li>
-              <li>The comms lead reviews "sensitive" pieces — though what counts as sensitive is also undefined</li>
+              <li>The editor tracks what the exec team cares about this week — strategic messaging priorities that change and aren't formally communicated down</li>
+              <li>The comms lead reviews sensitive pieces, though what qualifies as "sensitive" is also undocumented</li>
             </ul>
           </div>
           <div class="layer-col">
             <h5>Where it breaks down</h5>
             <ul>
-              <li>Drafts bounce back multiple times with feedback that isn't specific enough to act on</li>
-              <li>Output consistency depends on who happens to be reviewing</li>
-              <li>Review eats 20–25 hours a week — more during launch spikes</li>
-              <li>No documented quality bar exists for AI to check against; the criteria live in two people's heads</li>
+              <li>Drafts get sent back multiple times with feedback that isn't always specific enough to act on</li>
+              <li>Output consistency depends on who's reviewing — the editor's judgment isn't systematically the same across all content types</li>
+              <li>During launches, review volume exceeds capacity — the editor spends 20–25 hours per week on review alone, and more during spikes</li>
+              <li>No documented quality standard exists for AI to check against; the criteria live in the editor's and comms lead's heads</li>
             </ul>
           </div>
         </div>
 
+        <p class="prov-note">This classification is provisional — see gap report for what's missing.</p>
+
         <div class="opp-row">
           <div class="opp o-aug">
             <div class="opp-l">Augment</div>
-            <div class="opp-t">Pre-review triage against the existing style guide — grammar, prohibited language, missing CTAs, format issues by content type — so the editor's attention goes to judgment, not hunting.</div>
+            <div class="opp-t">Pre-review triage: before the editor opens a draft, AI checks it against the existing style guide and flags structural issues — grammar, prohibited language, missing CTAs, overly long sentences, format problems by content type. This handles the mechanical layer of review and surfaces specific issues with locations, so the editor's attention can go to judgment rather than hunting. A style guide already exists; AI can operationalize it immediately, even before deeper criteria are documented.</div>
+            <div class="risk">
+              <button class="risk-btn" onclick="toggleRisk(this)">⚠ Watch for — context drift</button>
+              <div class="risk-body">The style guide AI checks against will gradually become outdated if it isn't owned and maintained. Assign a specific owner and a review cadence — otherwise AI will confidently flag things the team stopped caring about and miss things they started caring about. Also watch for anchoring: if AI flags issues before the editor reads the draft, the editor's judgment may be unconsciously shaped by what AI found first. Consider having editors note their preliminary read before reviewing the AI triage output.</div>
+            </div>
           </div>
           <div class="opp o-human">
             <div class="opp-l">Keep Human</div>
-            <div class="opp-t">Final editorial judgment: brand voice beyond the guide, exec-priority alignment, tone by audience and moment. Until the tacit standard is externalized, AI can't reliably assist with it.</div>
+            <div class="opp-t">Final editorial judgment: brand voice beyond what's in the style guide, exec-priority alignment, tone calibration by audience and moment, and the call on what goes back vs. what goes through. This judgment layer is real — the editor can identify what's wrong but often can't fully articulate the criteria in advance. Until the tacit standards that drive these calls are externalized and documented, AI cannot reliably assist with them.</div>
+            <div class="risk">
+              <button class="risk-btn" onclick="toggleRisk(this)">⚠ Watch for — key-person dependency</button>
+              <div class="risk-body">The editorial judgment that makes this step work lives primarily with the editor and comms lead. If either is unavailable during a launch week, the workflow stalls. The judgment isn't documented, can't be delegated, and can't be backed up. Even if AI augmentation doesn't expand here, the team should invest in knowledge codification — not to automate, but so the judgment isn't fragile.</div>
+            </div>
           </div>
-          <div class="opp o-auto" style="background:var(--paper-2);border-color:var(--rule-2);">
-            <div class="opp-l" style="color:var(--accent);">Why Provisional</div>
-            <div class="opp-t">The Augment call is sound, but the quality bar isn't documented yet. A gap report names exactly what to surface to make this confident.</div>
-          </div>
-        </div>
-
-        <div class="risk">
-          <button class="risk-btn" onclick="toggleRisk(this)">⚠ Watch for — context drift &amp; key-person dependency</button>
-          <div class="risk-body">The style guide AI checks against goes stale without an owner and a review cadence — it'll confidently flag things the team stopped caring about. And the judgment that makes this step work lives with two people: if either is out during a launch week, the workflow stalls. Even where AI doesn't expand, codifying that judgment is worth doing — so it isn't fragile.</div>
         </div>
       </div>
     </div>
 
+    <div class="inc-label">Also included in every map</div>
     <div class="includes">
       <div class="inc"><span class="inc-dot"></span><span><b>A confidence rating on every call</b>Confident, Provisional, or Conditional — never false certainty.</span></div>
       <div class="inc"><span class="inc-dot"></span><span><b>The skills your team needs</b>What capabilities each classification actually requires to execute.</span></div>
@@ -562,8 +526,8 @@ footer { padding: 30px 28px; display: flex; align-items: center; justify-content
     <h2 class="display">Map one workflow this week.</h2>
     <p class="start-lead">It's open source and runs in Claude Code. Three example audits are included — clean, partial, and broken — so you can watch the reasoning before you run your own.</p>
     <div class="start-cta">
-      <a class="btn btn-onlight" href="https://github.com/alydperri/missing-middle-mapper">Get the repo ↗</a>
-      <a class="btn btn-outline" href="https://github.com/alydperri/missing-middle-mapper">Build an audit ↗</a>
+      <a class="btn btn-onlight" href="https://github.com/alydperri/missing-middle-mapper">Get the files ↗</a>
+      <a class="btn btn-outline" href="https://alydperri.github.io/missing-middle-mapper/audit-form.html">Build an audit ↗</a>
     </div>
     <div class="repo-line">github.com/alydperri/missing-middle-mapper</div>
 
@@ -572,20 +536,20 @@ footer { padding: 30px 28px; display: flex; align-items: center; justify-content
         <div class="opt-k">Option 01 · Manual</div>
         <div class="opt-h">Use the template directly</div>
         <div class="opt-t">Download the repo and fill out <code>audit-template.md</code> — it walks through every question with help text on what a good answer looks like. Drop the completed file into Claude Code and run.</div>
-        <a class="opt-a" href="https://github.com/alydperri/missing-middle-mapper">View audit-template.md ↗</a>
+        <a class="opt-a" href="https://github.com/alydperri/missing-middle-mapper/blob/main/audit-template.md">View audit-template.md ↗</a>
       </div>
       <div class="opt">
         <div class="opt-k">Option 02 · Guided form</div>
         <div class="opt-h">Build your audit in the browser</div>
         <div class="opt-t">Answer the questions step by step and download a properly formatted <code>.md</code> file, ready to feed the operator. Good for a first audit, or a team that wants more structure.</div>
-        <a class="opt-a" href="https://github.com/alydperri/missing-middle-mapper">Build your audit ↗</a>
+        <a class="opt-a" href="https://alydperri.github.io/missing-middle-mapper/audit-form.html">Build your audit ↗</a>
       </div>
     </div>
   </div>
 </section>
 
 <footer>
-  <span class="foot-l">Missing Middle Mapper · built on the Missing Middle framework</span>
+  <span class="foot-l">Missing Middle Mapper</span>
   <a class="foot-r" href="https://github.com/alydperri/missing-middle-mapper">github.com/alydperri/missing-middle-mapper ↗</a>
 </footer>
 
@@ -601,39 +565,22 @@ footer { padding: 30px 28px; display: flex; align-items: center; justify-content
   function toggleRisk(btn) {
     var body = btn.nextElementSibling;
     var open = body.classList.toggle('open');
-    btn.innerHTML = open
-      ? '⚠ Watch for — context drift &amp; key-person dependency ↑'
-      : '⚠ Watch for — context drift &amp; key-person dependency';
+    // shorten label on close, keep full text on open
+    var label = btn.textContent.replace(' ↑','');
+    btn.textContent = open ? label + ' ↑' : label;
   }
 
-  // signature reveal — fires when the strip scrolls into view
+  // scroll-in for the strip
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var strip = document.getElementById('strip');
-  var stateLbl = document.getElementById('stripState');
-
-  function revealStrip() {
-    strip.classList.add('in');
-    var cells = document.querySelectorAll('#strip-grid .cell');
-    if (reduce) {
-      cells.forEach(function(c){ c.classList.remove('hidden-state'); });
-      stateLbl.textContent = 'visible';
-      return;
-    }
-    cells.forEach(function(c, i) {
-      setTimeout(function(){ c.classList.remove('hidden-state'); }, 260 + i * 220);
-    });
-    setTimeout(function(){ stateLbl.textContent = 'visible'; }, 260 + cells.length * 220);
-  }
-
-  if ('IntersectionObserver' in window && !reduce) {
+  if (!reduce && 'IntersectionObserver' in window) {
     var io = new IntersectionObserver(function(entries){
       entries.forEach(function(e){
-        if (e.isIntersecting) { revealStrip(); io.disconnect(); }
+        if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
       });
-    }, { threshold: 0.4 });
-    io.observe(strip);
+    }, { threshold: 0.3 });
+    document.querySelectorAll('.reveal-on').forEach(function(el){ io.observe(el); });
   } else {
-    revealStrip();
+    document.querySelectorAll('.reveal-on').forEach(function(el){ el.classList.add('in'); });
   }
 </script>
 
